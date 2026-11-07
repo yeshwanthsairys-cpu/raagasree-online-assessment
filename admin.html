@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -200,7 +201,7 @@ th{color:#69778b;font-size:10px;text-transform:uppercase;letter-spacing:.6px;bac
 
 <div class="panel">
 <h3>Bulk Paste Questions</h3>
-<p>Copy your questions from WhatsApp and paste them below. Each question should have four options and a correct answer. You can also put the answer key at the bottom under ANSWERS.</p>
+<p>Paste questions copied from WhatsApp. Supports English and Hindi questions, A–D options, blank उत्तर lines and a separate ANSWERS section.</p>
 <div class="form-grid">
 <div class="field"><label>Class for all pasted questions</label><select id="bulkClass" class="class-options" onchange="updateBulkSubjects()"></select></div>
 <div class="field"><label>Subject for all pasted questions</label><select id="bulkSubject"><option value="">Select subject</option></select></div>
@@ -212,14 +213,10 @@ A) Mumbai
 B) New Delhi
 C) Chennai
 D) Kolkata
-Answer: B
+उत्तर:
 
-2. Which planet is known as the Red Planet?
-A) Earth
-B) Jupiter
-C) Mars
-D) Venus
-Answer: C"></textarea></div>
+ANSWERS
+1. B"></textarea></div>
 <div class="form-actions">
 <button class="primary-btn" id="previewBulkButton" type="button" onclick="previewBulkQuestions()">Preview Questions</button>
 <button class="secondary-btn" type="button" onclick="clearBulk()">Clear</button>
@@ -505,83 +502,104 @@ document.getElementById("questionsBody").addEventListener("click",async e=>{
  }
 });
 
-/* FIXED WHATSAPP / HINDI BULK QUESTION PARSER */
+/* WHATSAPP BULK QUESTION PARSER - ENGLISH + HINDI + SEPARATE ANSWER KEY */
 function parseBulkQuestions(raw){
- raw=String(raw||"").replace(/[\u200B-\u200D\uFEFF]/g,"").replace(/\r/g,"");
- const lines=raw.split("\n");
+ const lines=String(raw||"")
+  .replace(/\r/g,"")
+  .replace(/[\u200B-\u200D\uFEFF]/g,"")
+  .split("\n");
+
  const blocks=[];
  const answerKey={};
  let current=null;
- let readingAnswers=false;
+ let readingAnswerKey=false;
 
- const startPattern=/^(?:(?:Q(?:uestion)?\s*)?\d{1,3}\s*[\.\):\-]|Q(?:uestion)?\s*\d+\s*[:\-])\s*/i;
+ const questionStart=/^(?:(?:Q(?:uestion)?\s*)?\d{1,3}\s*[.)\-:]|Q(?:uestion)?\s*\d+\s*[:\-])\s*/i;
+ const optionPattern=/^(?:Option\s*)?([A-D])\s*[\)\].:\-]\s*(.*)$/i;
+ const answerPattern=/^(?:correct\s*answer|answer|ans|key|उत्तर|उतर)\s*[:=\-]?\s*([A-D])\s*$/i;
 
- function startQuestion(){
+ function newQuestion(){
   current={question:"",A:"",B:"",C:"",D:"",answer:"",errors:[]};
   blocks.push(current);
  }
 
- for(let original of lines){
+ lines.forEach(original=>{
   let line=original.trim();
-  if(!line)continue;
+  if(!line)return;
 
-  if(/^(?:ANSWER\s*KEY|ANSWERS?)\s*:?\s*$/i.test(line)){
-   readingAnswers=true;
+  if(/^ANSWERS?\s*:?\s*$/i.test(line)||/^ANSWER\s+KEY\s*:?\s*$/i.test(line)){
+   readingAnswerKey=true;
    current=null;
-   continue;
+   return;
   }
 
-  if(readingAnswers){
-   let answerMatch=line.match(/^(\d{1,3})\s*[\.\):\-]?\s*[-:]?\s*([A-D])\s*$/i);
-   if(answerMatch){
-    answerKey[Number(answerMatch[1])]=answerMatch[2].toUpperCase();
+  if(readingAnswerKey){
+   const keyMatch=line.match(/^(\d{1,3})\s*[.)\-:]?\s*([A-D])\s*$/i);
+   if(keyMatch){
+    answerKey[Number(keyMatch[1])]=keyMatch[2].toUpperCase();
    }
-   continue;
+   return;
   }
 
-  if(startPattern.test(line)){
-   startQuestion();
-   line=line.replace(startPattern,"").trim();
+  const startMatch=line.match(questionStart);
+  if(startMatch){
+   newQuestion();
+   line=line.replace(questionStart,"").trim();
+   if(line)current.question=line;
+   return;
   }
 
-  if(!current)startQuestion();
+  if(!current)newQuestion();
 
-  let match;
+  let match=line.match(optionPattern);
+  if(match){
+   current[match[1].toUpperCase()]=match[2].trim();
+   return;
+  }
 
-  match=line.match(/^(?:Option\s*)?A\s*[\)\].:\-]\s*(.*)$/i);
-  if(match){current.A=match[1].trim();continue;}
+  match=line.match(answerPattern);
+  if(match){
+   current.answer=match[1].toUpperCase();
+   return;
+  }
 
-  match=line.match(/^(?:Option\s*)?B\s*[\)\].:\-]\s*(.*)$/i);
-  if(match){current.B=match[1].trim();continue;}
+  // Ignore blank Hindi answer labels such as "उत्तर:" or "उतर :"
+  if(/^(?:उत्तर|उतर|answer|correct\s*answer|ans)\s*[:=\-]?\s*$/i.test(line)){
+   return;
+  }
 
-  match=line.match(/^(?:Option\s*)?C\s*[\)\].:\-]\s*(.*)$/i);
-  if(match){current.C=match[1].trim();continue;}
+  // Also accept inline answer formats such as "उत्तर: B"
+  match=line.match(/^(?:correct\s*answer|answer|ans|उत्तर|उतर)\s*[:=\-]\s*([A-D])(?:\s|$)/i);
+  if(match){
+   current.answer=match[1].toUpperCase();
+   return;
+  }
 
-  match=line.match(/^(?:Option\s*)?D\s*[\)\].:\-]\s*(.*)$/i);
-  if(match){current.D=match[1].trim();continue;}
-
-  match=line.match(/^(?:Correct\s*Answer|Answer|Ans|Key|उत्तर|उतर)\s*[:：=\-]?\s*([A-D])(?:\s*[\)\].:\-].*)?$/i);
-  if(match){current.answer=match[1].toUpperCase();continue;}
-
-  if(/^(?:उत्तर|उतर)\s*[:：]?\s*$/i.test(line))continue;
-
-  if(!current.A&&!current.B&&!current.C&&!current.D){
+  // Lines before options are considered question text.
+  if(!current.A&&!current.B&&!current.C&&!current.D&&!current.answer){
    current.question+=(current.question?" ":"")+line;
+  }else{
+   // Continuation lines for a question or option, where applicable.
+   if(current.D)current.D+=" "+line;
+   else if(current.C)current.C+=" "+line;
+   else if(current.B)current.B+=" "+line;
+   else if(current.A)current.A+=" "+line;
+   else current.question+=" "+line;
   }
- }
+ });
+
+ // Apply separate numbered answer key to the questions.
+ blocks.forEach((q,index)=>{
+  if(!q.answer&&answerKey[index+1])q.answer=answerKey[index+1];
+ });
 
  return blocks.filter(q=>q.question||q.A||q.B||q.C||q.D||q.answer).map((q,i)=>{
-  if(!q.answer)q.answer=answerKey[i+1]||"";
-
   if(!q.question)q.errors.push("Question text is missing.");
   ["A","B","C","D"].forEach(k=>{
    if(!q[k])q.errors.push("Option "+k+" is missing.");
   });
   if(!q.answer)q.errors.push("Correct answer is missing.");
-
-  q.number=i+1;
-  q.valid=q.errors.length===0;
-  return q;
+  return {...q,number:i+1,valid:q.errors.length===0};
  });
 }
 
@@ -595,52 +613,46 @@ function previewBulkQuestions(){
  if(!cl||!sub){notice("questionNotice","Select the class and subject for this batch.","error");return;}
  if(!Number.isFinite(marks)||marks<=0){notice("questionNotice","Enter valid marks per question.","error");return;}
 
- try{
-  parsedBulkQuestions=parseBulkQuestions(raw);
+ parsedBulkQuestions=parseBulkQuestions(raw);
 
-  if(!parsedBulkQuestions.length){
-   document.getElementById("bulkPreviewArea").hidden=true;
-   notice("questionNotice","No questions were recognised. Check the question numbering and format.","error");
-   return;
-  }
-
-  const valid=parsedBulkQuestions.filter(q=>q.valid).length;
-  const invalid=parsedBulkQuestions.length-valid;
-
-  document.getElementById("bulkSummary").textContent=
-   parsedBulkQuestions.length+" questions detected · "+valid+
-   " ready to save · "+invalid+" need correction. Class: "+cl+
-   " · Subject: "+subjectName(sub);
-
-  document.getElementById("bulkPreviewList").innerHTML=parsedBulkQuestions.map(q=>{
-   const errs=q.errors.length?
-    '<div class="preview-error">'+q.errors.map(esc).join("<br>")+'</div>':'';
-
-   return '<div class="preview-card '+(q.valid?"":"invalid")+'">'+
-    '<strong>Question '+q.number+'</strong>'+
-    '<div style="margin-top:8px;font-size:13px">'+esc(q.question)+'</div>'+
-    '<div class="option-line">A. '+esc(q.A)+'</div>'+
-    '<div class="option-line">B. '+esc(q.B)+'</div>'+
-    '<div class="option-line">C. '+esc(q.C)+'</div>'+
-    '<div class="option-line">D. '+esc(q.D)+'</div>'+
-    (q.valid?
-     '<div class="preview-answer">Correct answer: '+esc(q.answer)+' · '+marks+' mark(s)</div>':
-     errs)+
-    '</div>';
-  }).join("");
-
-  document.getElementById("bulkPreviewArea").hidden=false;
-  document.getElementById("bulkProgressBar").style.width="0%";
-  document.getElementById("bulkSaveStatus").textContent="";
-  document.getElementById("saveBulkButton").disabled=valid===0;
-
-  notice("questionNotice","Preview generated. Review every question before saving.","success");
-
- }catch(error){
-  console.error("Bulk preview error:",error);
+ if(!parsedBulkQuestions.length){
+  notice("questionNotice","No questions were recognised. Check the format and try again.","error");
   document.getElementById("bulkPreviewArea").hidden=true;
-  notice("questionNotice","Preview error: "+error.message,"error");
+  return;
  }
+
+ const valid=parsedBulkQuestions.filter(q=>q.valid).length;
+ const invalid=parsedBulkQuestions.length-valid;
+
+ document.getElementById("bulkSummary").textContent=
+  parsedBulkQuestions.length+" questions detected · "+valid+
+  " ready to save · "+invalid+" need correction. Class: "+cl+
+  " · Subject: "+subjectName(sub);
+
+ document.getElementById("bulkPreviewList").innerHTML=parsedBulkQuestions.map(q=>{
+  const errs=q.errors.length
+   ?'<div class="preview-error">'+q.errors.map(esc).join("<br>")+'</div>'
+   :'';
+
+  return '<div class="preview-card '+(q.valid?"":"invalid")+'">'+
+   '<strong>Question '+q.number+'</strong>'+
+   '<div style="margin-top:8px;font-size:13px">'+esc(q.question)+'</div>'+
+   '<div class="option-line">A. '+esc(q.A)+'</div>'+
+   '<div class="option-line">B. '+esc(q.B)+'</div>'+
+   '<div class="option-line">C. '+esc(q.C)+'</div>'+
+   '<div class="option-line">D. '+esc(q.D)+'</div>'+
+   (q.valid
+    ?'<div class="preview-answer">Correct answer: '+esc(q.answer)+' · '+marks+' mark(s)</div>'
+    :errs)+
+   '</div>';
+ }).join("");
+
+ document.getElementById("bulkPreviewArea").hidden=false;
+ document.getElementById("bulkProgressBar").style.width="0%";
+ document.getElementById("bulkSaveStatus").textContent="";
+ document.getElementById("saveBulkButton").disabled=valid===0;
+
+ notice("questionNotice","Preview generated. Review every question before saving.","success");
 }
 
 async function saveBulkQuestions(){
@@ -656,12 +668,10 @@ async function saveBulkQuestions(){
 
  btn.disabled=true;
  btn.textContent="Saving questions...";
-
  let saved=0,failed=[];
 
  for(let i=0;i<valid.length;i++){
   const q=valid[i];
-
   const question={
    Class:cl,
    "Subject ID":sub,
