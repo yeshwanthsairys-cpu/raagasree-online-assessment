@@ -5,377 +5,108 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Raagasree | Assessment Admin</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
 <style>
-:root {
-  --navy:#10264a;
-  --navy2:#193b69;
-  --gold:#c99b42;
-  --bg:#f3f5f9;
-  --white:#fff;
-  --text:#202b3c;
-  --muted:#7c8798;
-  --border:#e5e9f0;
-  --red:#d9534f;
-  --green:#21865b;
-}
+:root{--navy:#10264a;--navy2:#193b69;--gold:#c99b42;--bg:#f3f5f9;--white:#fff;--text:#202b3c;--muted:#7c8798;--border:#e5e9f0;--red:#d9534f;--green:#21865b}
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-
-.login-screen{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:linear-gradient(135deg,#0c1c38,#193b69);
-}
-.login-card{
-  width:100%;
-  max-width:420px;
-  background:#fff;
-  border-radius:18px;
-  padding:38px;
-  text-align:center;
-  box-shadow:0 20px 60px #0003;
-}
-.logo{
-  width:64px;height:64px;
-  border-radius:16px;
-  display:grid;place-items:center;
-  margin:0 auto 18px;
-  background:var(--navy);
-  color:var(--gold);
-  font-family:'Playfair Display',serif;
-  font-size:32px;
-}
-.login-card h1{
-  font-family:'Playfair Display',serif;
-  color:var(--navy);
-  font-size:25px;
-  margin:0 0 5px;
-}
+body{margin:0;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#0c1c38,#193b69)}
+.login-card{width:100%;max-width:420px;background:#fff;border-radius:18px;padding:38px;text-align:center;box-shadow:0 20px 60px #0003}
+.logo{width:64px;height:64px;border-radius:16px;display:grid;place-items:center;margin:0 auto 18px;background:var(--navy);color:var(--gold);font-family:'Playfair Display',serif;font-size:32px}
+.login-card h1{font-family:'Playfair Display',serif;color:var(--navy);font-size:25px;margin:0 0 5px}
 .login-card p{color:var(--muted);font-size:13px}
-.field{text-align:left;margin:20px 0}
-.field label{
-  display:block;
-  font-size:13px;
-  font-weight:700;
-  margin-bottom:8px;
-}
-.field input,.field select,.field textarea{
-  width:100%;
-  padding:12px 13px;
-  border:1px solid var(--border);
-  border-radius:9px;
-  outline:none;
-  background:#fff;
-  color:var(--text);
-}
-.field input:focus,.field select:focus,.field textarea:focus{
-  border-color:var(--gold);
-}
-.primary-btn{
-  border:0;
-  border-radius:9px;
-  padding:12px 18px;
-  color:white;
-  background:var(--navy);
-  font-weight:700;
-}
+.field{text-align:left;margin:14px 0}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}
+.field input,.field select,.field textarea{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:8px;outline:none;background:#fff;color:var(--text)}
+.field textarea{min-height:90px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold)}
+.primary-btn{border:0;border-radius:8px;padding:11px 16px;color:#fff;background:var(--navy);font-weight:700}
 .primary-btn:hover{background:var(--navy2)}
-.primary-btn:disabled{opacity:.65;cursor:wait}
+.primary-btn:disabled{opacity:.6;cursor:wait}
 .gold-btn{background:var(--gold);color:#17243b}
 .full{width:100%}
 .login-note{font-size:11px!important;margin-top:18px}
 #loginMessage{color:var(--red);font-size:12px;min-height:18px}
-
 .app{display:none;min-height:100vh}
-.sidebar{
-  width:255px;
-  background:var(--navy);
-  color:#fff;
-  position:fixed;
-  inset:0 auto 0 0;
-  padding:23px 15px;
-  overflow-y:auto;
-  z-index:10;
-}
-.brand{
-  padding:5px 12px 24px;
-  border-bottom:1px solid #ffffff20;
-}
-.brand strong{
-  display:block;
-  font-family:'Playfair Display',serif;
-  font-size:19px;
-}
+.sidebar{width:255px;background:var(--navy);color:#fff;position:fixed;inset:0 auto 0 0;padding:23px 15px;overflow-y:auto;z-index:10}
+.brand{padding:5px 12px 24px;border-bottom:1px solid #ffffff20}
+.brand strong{display:block;font-family:'Playfair Display',serif;font-size:19px}
 .brand span{font-size:11px;color:#c9d3e2}
-.brand small{
-  display:block;color:var(--gold);
-  font-size:10px;letter-spacing:1.4px;
-  margin-top:7px;
-}
-.nav-label{
-  color:#91a4bf;
-  font-size:10px;
-  letter-spacing:1.5px;
-  padding:22px 12px 9px;
-}
-.nav-btn{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  width:100%;
-  padding:12px;
-  border:0;
-  border-radius:8px;
-  color:#dce5f2;
-  background:transparent;
-  text-align:left;
-  font-size:13px;
-  margin:3px 0;
-}
-.nav-btn:hover,.nav-btn.active{
-  background:#ffffff18;
-  color:#fff;
-}
+.brand small{display:block;color:var(--gold);font-size:10px;letter-spacing:1.4px;margin-top:7px}
+.nav-label{color:#91a4bf;font-size:10px;letter-spacing:1.5px;padding:22px 12px 9px}
+.nav-btn{display:flex;align-items:center;gap:12px;width:100%;padding:12px;border:0;border-radius:8px;color:#dce5f2;background:transparent;text-align:left;font-size:13px;margin:3px 0}
+.nav-btn:hover,.nav-btn.active{background:#ffffff18;color:#fff}
 .nav-btn.active{border-left:3px solid var(--gold)}
 .nav-icon{width:20px;text-align:center;font-size:16px}
-.sidebar-bottom{
-  border-top:1px solid #ffffff20;
-  margin-top:25px;
-  padding:17px 10px;
-  font-size:11px;
-  color:#b6c3d5;
-}
-.main{
-  margin-left:255px;
-  min-height:100vh;
-}
-.topbar{
-  height:72px;
-  background:#fff;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 30px;
-  position:sticky;
-  top:0;
-  z-index:5;
-}
+.sidebar-bottom{border-top:1px solid #ffffff20;margin-top:25px;padding:17px 10px;font-size:11px;color:#b6c3d5}
+.main{margin-left:255px;min-height:100vh}
+.topbar{height:72px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:5}
 .topbar h2{font-size:17px;margin:0;color:var(--navy)}
-.admin-tag{
-  background:#f6f0e4;
-  color:#8d6726;
-  padding:7px 12px;
-  border-radius:20px;
-  font-size:11px;
-  font-weight:700;
-}
+.admin-tag{background:#f6f0e4;color:#8d6726;padding:7px 12px;border-radius:20px;font-size:11px;font-weight:700}
 .content{padding:28px 30px}
-.page{display:none}
-.page.active{display:block}
-.page-heading{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  flex-wrap:wrap;
-  margin-bottom:23px;
-}
-.page-heading h1{
-  font-family:'Playfair Display',serif;
-  font-size:25px;
-  color:var(--navy);
-  margin:0 0 5px;
-}
+.page{display:none}.page.active{display:block}
+.page-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:23px}
+.page-heading h1{font-family:'Playfair Display',serif;font-size:25px;color:var(--navy);margin:0 0 5px}
 .page-heading p{margin:0;color:var(--muted);font-size:12px}
-.cards{
-  display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:14px;
-  margin-bottom:24px;
-}
-.stat-card,.panel{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:20px;
-}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin-bottom:24px}
+.stat-card,.panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px}
 .stat-card small{color:var(--muted);font-size:12px}
-.stat-card strong{
-  display:block;
-  font-size:27px;
-  color:var(--navy);
-  margin-top:10px;
-}
+.stat-card strong{display:block;font-size:27px;color:var(--navy);margin-top:10px}
 .stat-card span{font-size:11px;color:var(--muted)}
 .panel{margin-bottom:20px}
 .panel h3{margin:0 0 7px;color:var(--navy);font-size:15px}
-.panel p{color:var(--muted);font-size:12px}
-.quick-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
-}
-.quick-btn{
-  padding:16px;
-  text-align:left;
-  border:1px solid var(--border);
-  background:#fff;
-  border-radius:10px;
-  color:var(--navy);
-  font-weight:700;
-}
+.panel p{color:var(--muted);font-size:12px;line-height:1.6}
+.quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.quick-btn{padding:16px;text-align:left;border:1px solid var(--border);background:#fff;border-radius:10px;color:var(--navy);font-weight:700}
 .quick-btn:hover{border-color:var(--gold);background:#fffaf0}
-.quick-btn span{
-  display:block;
-  font-size:11px;
-  color:var(--muted);
-  font-weight:400;
-  margin-top:6px;
-}
-.toolbar{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:15px;
-}
-.toolbar input,.toolbar select{
-  padding:10px 12px;
-  border:1px solid var(--border);
-  border-radius:8px;
-  background:#fff;
-  min-width:180px;
-}
+.quick-btn span{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:6px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+.toolbar input,.toolbar select{padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;min-width:170px}
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;min-width:650px}
-th,td{
-  text-align:left;
-  padding:13px 12px;
-  border-bottom:1px solid var(--border);
-  font-size:12px;
-}
-th{
-  color:#69778b;
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.6px;
-  background:#f8f9fb;
-}
+th,td{text-align:left;padding:12px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle}
+th{color:#69778b;font-size:10px;text-transform:uppercase;letter-spacing:.6px;background:#f8f9fb}
 .empty{text-align:center;color:var(--muted);padding:35px}
-.status{
-  display:inline-block;
-  border-radius:20px;
-  padding:5px 9px;
-  background:#edf6f0;
-  color:var(--green);
-  font-size:10px;
-  font-weight:700;
-}
-.status.inactive{
-  background:#fff0ef;
-  color:var(--red);
-}
-.notice{
-  background:#fff8e9;
-  border:1px solid #efdfb8;
-  color:#775a24;
-  padding:14px 16px;
-  border-radius:9px;
-  font-size:12px;
-  line-height:1.6;
-  margin-bottom:18px;
-}
-.notice.error{
-  background:#fff0ef;
-  border-color:#f1cccc;
-  color:#a33b37;
-}
-.notice.success{
-  background:#edf6f0;
-  border-color:#cce6d5;
-  color:#216b49;
-}
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:0 18px;
-}
-.form-grid .field{margin:10px 0}
-.form-actions{
-  display:flex;
-  gap:10px;
-  margin-top:18px;
-  flex-wrap:wrap;
-}
-.secondary-btn{
-  background:#fff;
-  border:1px solid var(--border);
-  color:var(--navy);
-  padding:11px 16px;
-  border-radius:8px;
-  font-weight:700;
-}
-.mobile-menu{
-  display:none;
-  border:0;
-  background:transparent;
-  color:var(--navy);
-  font-size:22px;
-}
-.footer{
-  padding:20px 0;
-  color:var(--muted);
-  font-size:10px;
-  text-align:center;
-}
-.refresh-btn{
-  background:#fff;
-  border:1px solid var(--border);
-  color:var(--navy);
-  border-radius:8px;
-  padding:10px 14px;
-  font-weight:700;
-}
-.refresh-btn:hover{border-color:var(--gold)}
-.loading{opacity:.6}
-@media(max-width:1200px){
-  .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
-@media(max-width:900px){
-  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
+.status{display:inline-block;border-radius:20px;padding:5px 9px;background:#edf6f0;color:var(--green);font-size:10px;font-weight:700}
+.status.inactive{background:#fff0ef;color:var(--red)}
+.notice{background:#fff8e9;border:1px solid #efdfb8;color:#775a24;padding:13px 15px;border-radius:9px;font-size:12px;line-height:1.6;margin-bottom:18px}
+.notice.error{background:#fff0ef;border-color:#f1cccc;color:#a33b37}
+.notice.success{background:#edf6f0;border-color:#cce6d5;color:#216b49}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
+.form-grid .field{margin:9px 0}
+.form-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.secondary-btn,.refresh-btn{background:#fff;border:1px solid var(--border);color:var(--navy);padding:10px 14px;border-radius:8px;font-weight:700}
+.secondary-btn:hover,.refresh-btn:hover{border-color:var(--gold)}
+.danger-btn{background:#fff0ef;color:#a33b37;border:1px solid #f1cccc;padding:7px 10px;border-radius:7px;font-size:11px;font-weight:700}
+.small-btn{padding:7px 10px;border-radius:7px;font-size:11px;margin:2px}
+.mobile-menu{display:none;border:0;background:transparent;color:var(--navy);font-size:22px}
+.footer{padding:20px 0;color:var(--muted);font-size:10px;text-align:center}
+.row-actions{white-space:nowrap}
+.section-title{margin:18px 0 10px;color:var(--navy);font-size:13px;font-weight:700}
+.subject-assignment{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end;padding:12px;background:#f8f9fb;border:1px solid var(--border);border-radius:9px;margin:10px 0}
+.subject-assignment .field{margin:0}
+.muted{color:var(--muted);font-size:11px}
+@media(max-width:1200px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){
-  .sidebar{transform:translateX(-100%);transition:.25s}
-  .sidebar.open{transform:translateX(0)}
-  .main{margin-left:0}
-  .topbar{padding:0 16px}
-  .mobile-menu{display:block}
-  .content{padding:20px 15px}
-  .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .stat-card{padding:14px}
-  .stat-card strong{font-size:22px}
-  .quick-grid{grid-template-columns:1fr}
-  .form-grid{grid-template-columns:1fr}
-  .page-heading h1{font-size:22px}
+.sidebar{transform:translateX(-100%);transition:.25s}
+.sidebar.open{transform:translateX(0)}
+.main{margin-left:0}
+.topbar{padding:0 16px}
+.mobile-menu{display:block}
+.content{padding:20px 15px}
+.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat-card{padding:14px}.stat-card strong{font-size:22px}
+.quick-grid{grid-template-columns:1fr}
+.form-grid{grid-template-columns:1fr}
+.page-heading h1{font-size:22px}
+.subject-assignment{grid-template-columns:1fr 1fr}
 }
-@media(max-width:380px){
-  .cards{grid-template-columns:1fr}
-}
+@media(max-width:380px){.cards{grid-template-columns:1fr}}
 </style>
 </head>
 
@@ -386,645 +117,573 @@ th{
     <div class="logo">R</div>
     <h1>Raagasree Admin</h1>
     <p>Online Assessment Management System</p>
-
     <div class="field">
       <label>Administrator PIN</label>
-      <input type="password" id="adminPin"
-        placeholder="Enter your admin PIN"
-        inputmode="numeric"
-        maxlength="6"
-        autocomplete="off">
+      <input type="password" id="adminPin" placeholder="Enter your admin PIN" inputmode="numeric" maxlength="6" autocomplete="off">
     </div>
-
-    <button class="primary-btn full" id="loginButton" onclick="adminLogin()">
-      Continue to Dashboard
-    </button>
-
+    <button class="primary-btn full" id="loginButton" onclick="adminLogin()">Continue to Dashboard</button>
     <div id="loginMessage"></div>
     <p class="login-note">RAAGASREE E.M HIGH SCHOOL · V. KOTA</p>
   </div>
 </section>
 
 <div class="app" id="adminApp">
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <strong>RAAGASREE</strong>
+    <span>E.M HIGH SCHOOL · V. KOTA</span>
+    <small>ASSESSMENT ADMINISTRATION</small>
+  </div>
+  <div class="nav-label">MAIN MENU</div>
+  <button class="nav-btn active" data-page="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
+  <button class="nav-btn" data-page="students"><span class="nav-icon">♙</span>Students</button>
+  <button class="nav-btn" data-page="subjects"><span class="nav-icon">▤</span>Subjects</button>
+  <div class="nav-label">EXAMINATION</div>
+  <button class="nav-btn" data-page="questions"><span class="nav-icon">☷</span>Question Bank</button>
+  <button class="nav-btn" data-page="exams"><span class="nav-icon">◷</span>Exam Management</button>
+  <button class="nav-btn" data-page="results"><span class="nav-icon">▥</span>Results</button>
+  <button class="nav-btn" data-page="attempts"><span class="nav-icon">◴</span>Exam Attempts</button>
+  <div class="nav-label">SECURITY</div>
+  <button class="nav-btn" data-page="verification"><span class="nav-icon">◇</span>Verification Logs</button>
+  <button class="nav-btn" data-page="settings"><span class="nav-icon">⚙</span>Settings</button>
+  <div class="sidebar-bottom">
+    Academic Year 2026–27<br>Excellence in Every Step
+    <br><br><button class="nav-btn" onclick="logout()">↪ &nbsp; Logout</button>
+  </div>
+</aside>
 
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <strong>RAAGASREE</strong>
-      <span>E.M HIGH SCHOOL · V. KOTA</span>
-      <small>ASSESSMENT ADMINISTRATION</small>
+<main class="main">
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
+    <h2 id="topTitle">Dashboard</h2>
+  </div>
+  <div class="admin-tag">ADMINISTRATOR</div>
+</header>
+
+<div class="content">
+
+<!-- DASHBOARD -->
+<section class="page active" id="page-dashboard">
+  <div class="page-heading">
+    <div><h1>Dashboard Overview</h1><p>Manage your school's online examinations.</p></div>
+    <button class="refresh-btn" onclick="loadAdminData()">↻ Refresh Data</button>
+  </div>
+  <div class="notice" id="dashboardNotice">Connecting to the assessment database...</div>
+  <div class="cards">
+    <div class="stat-card"><small>Total Students</small><strong id="totalStudents">—</strong><span>Registered students</span></div>
+    <div class="stat-card"><small>Active Students</small><strong id="activeStudents">—</strong><span>Currently active</span></div>
+    <div class="stat-card"><small>Total Subjects</small><strong id="totalSubjects">—</strong><span>Configured subjects</span></div>
+    <div class="stat-card"><small>Question Bank</small><strong id="totalQuestions">—</strong><span>Available questions</span></div>
+    <div class="stat-card"><small>Total Examinations</small><strong id="totalExams">—</strong><span>Created examinations</span></div>
+  </div>
+  <div class="panel">
+    <h3>Quick Actions</h3><p>Choose a section to manage your assessment system.</p>
+    <div class="quick-grid">
+      <button class="quick-btn" onclick="showPage('students')">View Students<span>View registered student records</span></button>
+      <button class="quick-btn" onclick="showPage('questions')">Add Questions<span>Build your question bank</span></button>
+      <button class="quick-btn" onclick="showPage('exams')">Create Examination<span>Configure a new assessment</span></button>
     </div>
+  </div>
+  <div class="panel">
+    <h3>System Information</h3>
+    <div class="table-wrap"><table><tbody>
+      <tr><td>School</td><td>Raagasree E.M High School</td></tr>
+      <tr><td>Location</td><td>V. KOTA</td></tr>
+      <tr><td>Academic Year</td><td>2026–27</td></tr>
+      <tr><td>Backend Connection</td><td id="connectionStatus">Checking...</td></tr>
+      <tr><td>Last Updated</td><td id="lastUpdated">—</td></tr>
+    </tbody></table></div>
+  </div>
+</section>
 
-    <div class="nav-label">MAIN MENU</div>
-    <button class="nav-btn active" data-page="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
-    <button class="nav-btn" data-page="students"><span class="nav-icon">♙</span>Students</button>
-    <button class="nav-btn" data-page="subjects"><span class="nav-icon">▤</span>Subjects</button>
-
-    <div class="nav-label">EXAMINATION</div>
-    <button class="nav-btn" data-page="questions"><span class="nav-icon">☷</span>Question Bank</button>
-    <button class="nav-btn" data-page="exams"><span class="nav-icon">◷</span>Exam Management</button>
-    <button class="nav-btn" data-page="results"><span class="nav-icon">▥</span>Results</button>
-
-    <div class="nav-label">SECURITY</div>
-    <button class="nav-btn" data-page="verification"><span class="nav-icon">◇</span>Verification Logs</button>
-    <button class="nav-btn" data-page="settings"><span class="nav-icon">⚙</span>Settings</button>
-
-    <div class="sidebar-bottom">
-      Academic Year 2026–27<br>
-      Excellence in Every Step
-      <br><br>
-      <button class="nav-btn" onclick="logout()">↪ &nbsp; Logout</button>
+<!-- STUDENTS -->
+<section class="page" id="page-students">
+  <div class="page-heading">
+    <div><h1>Student Management</h1><p>View registered student records from your database.</p></div>
+    <button class="refresh-btn" onclick="loadAdminData()">↻ Refresh Students</button>
+  </div>
+  <div class="notice" id="studentNotice">Student records are loaded from the Assessment Database.</div>
+  <div class="panel">
+    <div class="toolbar">
+      <input id="studentSearch" placeholder="Search name or hall ticket" oninput="renderStudents()">
+      <select id="classFilter" onchange="renderStudents()"><option value="">All Classes</option></select>
     </div>
-  </aside>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Hall Ticket</th><th>Student Name</th><th>Father Name</th><th>Class</th><th>Section</th><th>Academic Year</th><th>Status</th></tr></thead>
+      <tbody id="studentsTableBody"><tr><td colspan="7" class="empty">Loading student records...</td></tr></tbody>
+    </table></div>
+    <p id="studentCount" class="muted">Showing 0 students</p>
+  </div>
+</section>
 
-  <main class="main">
-    <header class="topbar">
-      <div style="display:flex;align-items:center;gap:12px">
-        <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
-        <h2 id="topTitle">Dashboard</h2>
+<!-- SUBJECTS -->
+<section class="page" id="page-subjects">
+  <div class="page-heading">
+    <div><h1>Subject Management</h1><p>Add, edit and activate or deactivate class subjects.</p></div>
+    <button class="primary-btn" onclick="openSubjectForm()">＋ Add Subject</button>
+  </div>
+  <div id="subjectNotice" class="notice">Loading subjects...</div>
+  <div class="panel" id="subjectFormPanel" hidden>
+    <h3 id="subjectFormTitle">Add Subject</h3>
+    <form id="subjectForm">
+      <input type="hidden" id="subjectId">
+      <div class="form-grid">
+        <div class="field"><label>Subject Name</label><input id="subjectName" required placeholder="e.g. Mathematics"></div>
+        <div class="field"><label>Class</label><select id="subjectClass" required class="class-options"></select></div>
+        <div class="field"><label>Status</label><select id="subjectStatus"><option>Active</option><option>Inactive</option></select></div>
       </div>
-      <div class="admin-tag">ADMINISTRATOR</div>
-    </header>
+      <div class="form-actions"><button class="primary-btn" type="submit">Save Subject</button><button class="secondary-btn" type="button" onclick="closeForm('subjectFormPanel')">Cancel</button></div>
+    </form>
+  </div>
+  <div class="panel">
+    <div class="toolbar"><input id="subjectSearch" placeholder="Search subjects..." oninput="renderSubjects()"><select id="subjectClassFilter" onchange="renderSubjects()"><option value="">All Classes</option></select></div>
+    <div class="table-wrap"><table><thead><tr><th>Subject ID</th><th>Subject</th><th>Class</th><th>Status</th><th>Actions</th></tr></thead><tbody id="subjectsBody"></tbody></table></div>
+  </div>
+</section>
 
-    <div class="content">
-
-      <!-- DASHBOARD -->
-      <section class="page active" id="page-dashboard">
-        <div class="page-heading">
-          <div>
-            <h1>Dashboard Overview</h1>
-            <p>Manage your school's online examinations.</p>
-          </div>
-          <button class="refresh-btn" onclick="loadAdminData()">↻ Refresh Data</button>
-        </div>
-
-        <div class="notice" id="dashboardNotice">
-          Connecting to the assessment database...
-        </div>
-
-        <div class="cards">
-          <div class="stat-card">
-            <small>Total Students</small>
-            <strong id="totalStudents">—</strong>
-            <span>Registered students</span>
-          </div>
-          <div class="stat-card">
-            <small>Active Students</small>
-            <strong id="activeStudents">—</strong>
-            <span>Currently active</span>
-          </div>
-          <div class="stat-card">
-            <small>Total Subjects</small>
-            <strong id="totalSubjects">—</strong>
-            <span>Configured subjects</span>
-          </div>
-          <div class="stat-card">
-            <small>Question Bank</small>
-            <strong id="totalQuestions">—</strong>
-            <span>Available questions</span>
-          </div>
-          <div class="stat-card">
-            <small>Total Examinations</small>
-            <strong id="totalExams">—</strong>
-            <span>Created examinations</span>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h3>Quick Actions</h3>
-          <p>Choose a section to manage your assessment system.</p>
-          <div class="quick-grid">
-            <button class="quick-btn" onclick="showPage('students')">＋ View Students<span>Manage student records</span></button>
-            <button class="quick-btn" onclick="showPage('questions')">＋ Add Questions<span>Build your question bank</span></button>
-            <button class="quick-btn" onclick="showPage('exams')">＋ Create Examination<span>Configure a new examination</span></button>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h3>System Information</h3>
-          <div class="table-wrap">
-            <table>
-              <tbody>
-                <tr><td>School</td><td>Raagasree E.M High School</td></tr>
-                <tr><td>Location</td><td>V. Kota</td></tr>
-                <tr><td>Academic Year</td><td>2026–27</td></tr>
-                <tr><td>Backend Connection</td><td id="connectionStatus">Checking...</td></tr>
-                <tr><td>Last Updated</td><td id="lastUpdated">—</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- STUDENTS -->
-      <section class="page" id="page-students">
-        <div class="page-heading">
-          <div>
-            <h1>Student Management</h1>
-            <p>View registered student records from your database.</p>
-          </div>
-          <button class="refresh-btn" onclick="loadAdminData()">↻ Refresh Students</button>
-        </div>
-
-        <div class="notice" id="studentNotice">
-          Student records are loaded from the Assessment Database.
-        </div>
-
-        <div class="panel">
-          <div class="toolbar">
-            <input id="studentSearch" placeholder="Search name or hall ticket" oninput="renderStudents()">
-            <select id="classFilter" onchange="renderStudents()">
-              <option value="">All Classes</option>
-            </select>
-          </div>
-
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Hall Ticket</th>
-                  <th>Student Name</th>
-                  <th>Father Name</th>
-                  <th>Class</th>
-                  <th>Section</th>
-                  <th>Academic Year</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="studentsTableBody">
-                <tr><td colspan="7" class="empty">Loading student records...</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p id="studentCount" style="margin-top:14px">Showing 0 students</p>
-        </div>
-      </section>
-
-      <!-- SUBJECTS -->
-      <section class="page" id="page-subjects">
-        <div class="page-heading">
-          <div><h1>Subject Management</h1><p>Configure subjects for each class.</p></div>
-        </div>
-        <div class="notice">Subject creation and editing will be connected in the next backend update.</div>
-      </section>
-
-      <!-- QUESTION BANK -->
-      <section class="page" id="page-questions">
-        <div class="page-heading">
-          <div><h1>Question Bank</h1><p>Create and maintain multiple-choice questions.</p></div>
-        </div>
-        <div class="notice">Question creation and editing will be connected in the next backend update.</div>
-      </section>
-
-      <!-- EXAMS -->
-      <section class="page" id="page-exams">
-        <div class="page-heading">
-          <div><h1>Exam Management</h1><p>Create, configure and control examinations.</p></div>
-        </div>
-        <div class="notice">Examination creation and editing will be connected in the next backend update.</div>
-      </section>
-
-      <!-- RESULTS -->
-      <section class="page" id="page-results">
-        <div class="page-heading">
-          <div><h1>Examination Results</h1><p>View student performance and examination reports.</p></div>
-        </div>
-        <div class="notice">Results will be displayed after the examination submission system is connected.</div>
-      </section>
-
-      <!-- VERIFICATION -->
-      <section class="page" id="page-verification">
-        <div class="page-heading">
-          <div><h1>Verification Logs</h1><p>Review student identity verification records.</p></div>
-        </div>
-        <div class="notice">Verification records will be connected in a later backend update. Access to verification images must be restricted.</div>
-      </section>
-
-      <!-- SETTINGS -->
-      <section class="page" id="page-settings">
-        <div class="page-heading">
-          <div><h1>System Settings</h1><p>Manage examination and portal settings.</p></div>
-        </div>
-        <div class="panel">
-          <h3>Student Examination Access</h3>
-          <p>The common student password is managed securely through the Apps Script backend. It is not displayed on this webpage.</p>
-        </div>
-        <div class="panel">
-          <h3>School Information</h3>
-          <div class="field"><label>School Name</label><input value="Raagasree E.M High School" disabled></div>
-          <div class="field"><label>Location</label><input value="V. Kota" disabled></div>
-          <div class="field"><label>Academic Year</label><input value="2026–27" disabled></div>
-        </div>
-      </section>
-
-      <div class="footer">
-        RAAGASREE E.M HIGH SCHOOL · V. KOTA<br>
-        Excellence in Every Step
+<!-- QUESTIONS -->
+<section class="page" id="page-questions">
+  <div class="page-heading">
+    <div><h1>Question Bank</h1><p>Create and maintain multiple-choice questions.</p></div>
+    <button class="primary-btn" onclick="openQuestionForm()">＋ Add Question</button>
+  </div>
+  <div id="questionNotice" class="notice">Questions are loaded from the database.</div>
+  <div class="panel" id="questionFormPanel" hidden>
+    <h3 id="questionFormTitle">Add Question</h3>
+    <form id="questionForm">
+      <input type="hidden" id="questionId">
+      <div class="form-grid">
+        <div class="field"><label>Class</label><select id="questionClass" class="class-options" required onchange="updateQuestionSubjects()"></select></div>
+        <div class="field"><label>Subject</label><select id="questionSubject" required></select></div>
       </div>
+      <div class="field"><label>Question</label><textarea id="questionText" required placeholder="Enter the question"></textarea></div>
+      <div class="form-grid">
+        <div class="field"><label>Option A</label><input id="optionA" required></div>
+        <div class="field"><label>Option B</label><input id="optionB" required></div>
+        <div class="field"><label>Option C</label><input id="optionC" required></div>
+        <div class="field"><label>Option D</label><input id="optionD" required></div>
+        <div class="field"><label>Correct Answer</label><select id="correctAnswer" required><option value="">Select answer</option><option value="A">Option A</option><option value="B">Option B</option><option value="C">Option C</option><option value="D">Option D</option></select></div>
+        <div class="field"><label>Marks</label><input id="questionMarks" type="number" min="0.01" step="0.01" value="1" required></div>
+        <div class="field"><label>Status</label><select id="questionStatus"><option>Active</option><option>Inactive</option></select></div>
+      </div>
+      <div class="form-actions"><button class="primary-btn" type="submit">Save Question</button><button class="secondary-btn" type="button" onclick="closeForm('questionFormPanel')">Cancel</button></div>
+    </form>
+  </div>
+  <div class="panel">
+    <div class="toolbar">
+      <input id="questionSearch" placeholder="Search question text..." oninput="renderQuestions()">
+      <select id="questionClassFilter" onchange="renderQuestions()"><option value="">All Classes</option></select>
+      <select id="questionSubjectFilter" onchange="renderQuestions()"><option value="">All Subjects</option></select>
+      <select id="questionStatusFilter" onchange="renderQuestions()"><option value="">All Statuses</option><option>Active</option><option>Inactive</option></select>
     </div>
-  </main>
+    <div class="table-wrap"><table><thead><tr><th>Question</th><th>Class</th><th>Subject</th><th>Correct</th><th>Marks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="questionsBody"></tbody></table></div>
+  </div>
+</section>
+
+<!-- EXAMS -->
+<section class="page" id="page-exams">
+  <div class="page-heading">
+    <div><h1>Exam Management</h1><p>Create assessments and assign class subjects, questions and marks.</p></div>
+    <button class="primary-btn" onclick="openExamForm()">＋ Create Assessment</button>
+  </div>
+  <div id="examNotice" class="notice">Assessment records are loaded from the database.</div>
+  <div class="panel" id="examFormPanel" hidden>
+    <h3 id="examFormTitle">Create Assessment</h3>
+    <form id="examForm">
+      <input type="hidden" id="examId">
+      <div class="form-grid">
+        <div class="field"><label>Assessment Name</label><input id="examName" required placeholder="e.g. Mathematics Practice Test"></div>
+        <div class="field"><label>Class</label><select id="examClass" class="class-options" required onchange="updateExamSubjectOptions()"></select></div>
+        <div class="field"><label>Academic Year</label><input id="examYear" value="2026-27" required></div>
+        <div class="field"><label>Duration (Minutes)</label><input id="examDuration" type="number" min="1" required value="30"></div>
+        <div class="field"><label>Start Date</label><input id="examStart" type="date"></div>
+        <div class="field"><label>End Date</label><input id="examEnd" type="date"></div>
+        <div class="field"><label>Status</label><select id="examStatus"><option>Inactive</option><option>Active</option></select></div>
+      </div>
+      <div class="section-title">Subject Assignments</div>
+      <p class="muted">Choose subjects, question counts and marks per question. Total marks are calculated automatically.</p>
+      <div id="examSubjectRows"></div>
+      <button class="secondary-btn" type="button" onclick="addExamSubjectRow()">＋ Add Subject</button>
+      <div class="notice" style="margin-top:15px;margin-bottom:0">Calculated total: <strong id="examTotalQuestions">0</strong> questions · <strong id="examTotalMarks">0</strong> marks</div>
+      <div class="form-actions"><button class="primary-btn" type="submit">Save Assessment</button><button class="secondary-btn" type="button" onclick="closeForm('examFormPanel')">Cancel</button></div>
+    </form>
+  </div>
+  <div class="panel">
+    <div class="toolbar"><input id="examSearch" placeholder="Search assessments..." oninput="renderExams()"><select id="examClassFilter" onchange="renderExams()"><option value="">All Classes</option></select></div>
+    <div class="table-wrap"><table><thead><tr><th>Assessment</th><th>Class</th><th>Academic Year</th><th>Duration</th><th>Questions</th><th>Total Marks</th><th>Status</th><th>Actions</th></tr></thead><tbody id="examsBody"></tbody></table></div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="page" id="page-results">
+  <div class="page-heading"><div><h1>Examination Results</h1><p>View recorded student assessment results.</p></div><button class="refresh-btn" onclick="loadResults()">↻ Refresh</button></div>
+  <div class="notice">Results appear here when the student examination submission workflow records them in the ExamResults sheet.</div>
+  <div class="panel">
+    <div class="toolbar"><input id="resultSearch" placeholder="Search student or hall ticket..." oninput="renderResults()"></div>
+    <div class="table-wrap"><table><thead><tr><th>Hall Ticket</th><th>Student</th><th>Class</th><th>Exam ID</th><th>Attempted</th><th>Correct</th><th>Marks</th><th>Percentage</th><th>Status</th><th>Completed</th></tr></thead><tbody id="resultsBody"></tbody></table></div>
+  </div>
+</section>
+
+<!-- ATTEMPTS -->
+<section class="page" id="page-attempts">
+  <div class="page-heading"><div><h1>Exam Attempts</h1><p>Review recorded examination attempts.</p></div><button class="refresh-btn" onclick="loadAttempts()">↻ Refresh</button></div>
+  <div class="notice">Attempt records will appear here when the student examination workflow writes to the ExamAttempts sheet.</div>
+  <div class="panel"><div class="table-wrap"><table><thead><tr><th>Attempt ID</th><th>Exam ID</th><th>Hall Ticket</th><th>Started At</th><th>Expected End</th><th>Submitted At</th><th>Status</th></tr></thead><tbody id="attemptsBody"></tbody></table></div></div>
+</section>
+
+<!-- VERIFICATION -->
+<section class="page" id="page-verification">
+  <div class="page-heading"><div><h1>Verification Logs</h1><p>Review identity verification records.</p></div><button class="refresh-btn" onclick="loadVerification()">↻ Refresh</button></div>
+  <div class="notice">Only verification log details are displayed. Selfie files are not exposed in this admin table.</div>
+  <div class="panel"><div class="table-wrap"><table><thead><tr><th>Verification ID</th><th>Exam ID</th><th>Hall Ticket</th><th>Method</th><th>Consent</th><th>Verified At</th><th>Status</th></tr></thead><tbody id="verificationBody"></tbody></table></div></div>
+</section>
+
+<!-- SETTINGS -->
+<section class="page" id="page-settings">
+  <div class="page-heading"><div><h1>System Settings</h1><p>Portal and school information.</p></div></div>
+  <div class="panel"><h3>Student Examination Access</h3><p>The common student password is managed securely through Apps Script Script Properties. It is not displayed on this webpage.</p></div>
+  <div class="panel"><h3>School Information</h3>
+    <div class="field"><label>School Name</label><input value="Raagasree E.M High School" disabled></div>
+    <div class="field"><label>Location</label><input value="V. Kota" disabled></div>
+    <div class="field"><label>Academic Year</label><input value="2026–27" disabled></div>
+  </div>
+</section>
+
+<div class="footer">RAAGASREE E.M HIGH SCHOOL · V. KOTA<br>Excellence in Every Step</div>
+</div>
+</main>
 </div>
 
 <script>
-/************************************************************
- * RAAGASREE ONLINE ASSESSMENT
- * ADMIN DASHBOARD — LIVE DATABASE CONNECTION
- ************************************************************/
+const API_URL="https://script.google.com/macros/s/AKfycbyzutEAMnW_97VZpPvGqKGiZa3psQHwUE_AB3Yxvby1f0l6APEE7gWnGMt20wGkHIGs/exec";
+const TOKEN_KEY="RAAGASREE_ADMIN_TOKEN";
+const CLASSES=["LKG","UKG","Class 1","Class 2","Class 3","Class 4","Class 5","Class 6","Class 7","Class 8","Class 9","Class 10"];
+const TITLES={dashboard:"Dashboard",students:"Student Management",subjects:"Subject Management",questions:"Question Bank",exams:"Exam Management",results:"Examination Results",attempts:"Exam Attempts",verification:"Verification Logs",settings:"System Settings"};
+let allStudents=[],subjects=[],questions=[],exams=[],results=[],attempts=[],verificationLogs=[];
+let examSubjectAssignments=[];
 
-const ASSESSMENT_API_URL =
-  "https://script.google.com/macros/s/AKfycbyzutEAMnW_97VZpPvGqKGiZa3psQHwUE_AB3Yxvby1f0l6APEE7gWnGMt20wGkHIGs/exec";
-
-const TOKEN_KEY = "RAAGASREE_ADMIN_TOKEN";
-
-const pageTitles = {
-  dashboard:"Dashboard",
-  students:"Student Management",
-  subjects:"Subject Management",
-  questions:"Question Bank",
-  exams:"Exam Management",
-  results:"Examination Results",
-  verification:"Verification Logs",
-  settings:"System Settings"
-};
-
-let allStudents = [];
-
-
-/************************************************************
- * API REQUEST
- ************************************************************/
-
-async function apiRequest(payload) {
-  const response = await fetch(ASSESSMENT_API_URL, {
-    method:"POST",
-    headers:{
-      "Content-Type":"text/plain;charset=utf-8"
-    },
-    body:JSON.stringify(payload)
-  });
-
-  if (!response.ok) {
-    throw new Error("Server returned HTTP " + response.status);
-  }
-
-  return await response.json();
+async function api(payload){
+  const token=sessionStorage.getItem(TOKEN_KEY);
+  if(payload.action!=="adminLogin")payload.token=token;
+  const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+  if(!response.ok)throw new Error("Server returned HTTP "+response.status);
+  const data=await response.json();
+  if(!data.success)throw new Error(data.message||"Request failed.");
+  return data;
 }
-
-
-/************************************************************
- * ADMIN LOGIN
- ************************************************************/
-
-async function adminLogin() {
-  const pin = document.getElementById("adminPin").value.trim();
-  const message = document.getElementById("loginMessage");
-  const button = document.getElementById("loginButton");
-
-  if (!/^\d{6}$/.test(pin)) {
-    message.style.color = "#d9534f";
-    message.textContent = "Please enter your complete 6-digit PIN.";
-    return;
-  }
-
-  message.style.color = "#7c8798";
-  message.textContent = "Verifying administrator PIN...";
-
-  button.disabled = true;
-  button.textContent = "Please wait...";
-
-  try {
-    const result = await apiRequest({
-      action:"adminLogin",
-      pin:pin
-    });
-
-    if (!result.success || !result.token) {
-      throw new Error(result.message || "Administrator login failed.");
-    }
-
-    sessionStorage.setItem(TOKEN_KEY,result.token);
-
-    document.getElementById("loginPin");
-    message.textContent = "";
-
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("adminApp").style.display = "block";
-
+function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function statusBadge(s){const active=String(s).toLowerCase()==="active";return '<span class="status '+(active?"":"inactive")+'">'+esc(s||"Unknown")+'</span>';}
+function notice(id,msg,type){const el=document.getElementById(id);if(!el)return;el.className="notice"+(type?" "+type:"");el.textContent=msg;}
+function token(){return sessionStorage.getItem(TOKEN_KEY)||"";}
+function showLogin(){document.getElementById("adminApp").style.display="none";document.getElementById("loginScreen").style.display="flex";}
+function closeForm(id){document.getElementById(id).hidden=true;}
+function openForm(id){document.getElementById(id).hidden=false;document.getElementById(id).scrollIntoView({behavior:"smooth",block:"start"});}
+function fillClassSelects(){
+  document.querySelectorAll(".class-options").forEach(select=>{
+    const current=select.value;
+    select.innerHTML='<option value="">Select class</option>'+CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+    if(CLASSES.includes(current))select.value=current;
+  });
+}
+async function adminLogin(){
+  const pin=document.getElementById("adminPin").value.trim(),msg=document.getElementById("loginMessage"),btn=document.getElementById("loginButton");
+  if(!/^\d{6}$/.test(pin)){msg.textContent="Please enter your complete 6-digit PIN.";return;}
+  btn.disabled=true;btn.textContent="Please wait...";msg.textContent="Verifying administrator PIN...";
+  try{
+    const data=await api({action:"adminLogin",pin});
+    sessionStorage.setItem(TOKEN_KEY,data.token);
+    document.getElementById("loginScreen").style.display="none";
+    document.getElementById("adminApp").style.display="block";
+    fillClassSelects();
     await loadAdminData();
-
-  } catch(error) {
-    console.error("Admin login error:",error);
-    message.style.color = "#d9534f";
-    message.textContent = error.message || "Unable to connect to the backend.";
-  }
-
-  button.disabled = false;
-  button.textContent = "Continue to Dashboard";
+  }catch(e){msg.textContent=e.message;}
+  btn.disabled=false;btn.textContent="Continue to Dashboard";
 }
-
-
-/************************************************************
- * LOAD LIVE ADMIN DATA
- ************************************************************/
-
-async function loadAdminData() {
-  const token = sessionStorage.getItem(TOKEN_KEY);
-
-  if (!token) {
-    showLoginScreen();
-    return;
-  }
-
-  const notice = document.getElementById("dashboardNotice");
-  const connection = document.getElementById("connectionStatus");
-
-  notice.className = "notice";
-  notice.textContent = "Loading live information from the assessment database...";
-  connection.textContent = "Connecting...";
-
-  try {
-    const result = await apiRequest({
-      action:"getAdminData",
-      token:token
-    });
-
-    if (!result.success) {
-      if (result.message && result.message.toLowerCase().includes("session")) {
-        logout();
-        return;
-      }
-      throw new Error(result.message || "Unable to load database information.");
-    }
-
-    updateDashboard(result);
-    allStudents = Array.isArray(result.students) ? result.students : [];
-
-    populateClassFilter();
-    renderStudents();
-
-    notice.className = "notice success";
-    notice.textContent = "Database connected successfully. Dashboard information is up to date.";
-
-    connection.textContent = "Connected";
-    document.getElementById("lastUpdated").textContent =
-      new Date().toLocaleString();
-
-    document.getElementById("studentNotice").className = "notice success";
-    document.getElementById("studentNotice").textContent =
-      "Successfully loaded " + allStudents.length + " student records from your Assessment Database.";
-
-  } catch(error) {
-    console.error("Database loading error:",error);
-
-    notice.className = "notice error";
-    notice.textContent = error.message || "Unable to load data from the database.";
-
-    connection.textContent = "Connection failed";
-    document.getElementById("studentNotice").className = "notice error";
-    document.getElementById("studentNotice").textContent =
-      "Unable to load student records. Please check your backend deployment.";
-  }
-}
-
-
-/************************************************************
- * UPDATE DASHBOARD STATISTICS
- ************************************************************/
-
-function updateDashboard(data) {
-  const stats = data.stats || {};
-
-  document.getElementById("totalStudents").textContent =
-    Number(stats.totalStudents || 0);
-
-  document.getElementById("activeStudents").textContent =
-    Number(stats.activeStudents || 0);
-
-  document.getElementById("totalSubjects").textContent =
-    Number(stats.totalSubjects || 0);
-
-  document.getElementById("totalQuestions").textContent =
-    Number(stats.totalQuestions || 0);
-
-  document.getElementById("totalExams").textContent =
-    Number(stats.totalExams || 0);
-}
-
-
-/************************************************************
- * CLASS FILTER
- ************************************************************/
-
-function populateClassFilter() {
-  const filter = document.getElementById("classFilter");
-  const previousValue = filter.value;
-
-  const classes = [...new Set(
-    allStudents
-      .map(student => String(student.className || "").trim())
-      .filter(Boolean)
-  )];
-
-  classes.sort((a,b) => {
-    const order = ["LKG","UKG","1","2","3","4","5","6","7","8","9","10"];
-    return order.indexOf(a) - order.indexOf(b);
-  });
-
-  filter.replaceChildren();
-
-  const allOption = document.createElement("option");
-  allOption.value = "";
-  allOption.textContent = "All Classes";
-  filter.appendChild(allOption);
-
-  classes.forEach(className => {
-    const option = document.createElement("option");
-    option.value = className;
-    option.textContent = className;
-    filter.appendChild(option);
-  });
-
-  if (classes.includes(previousValue)) {
-    filter.value = previousValue;
-  }
-}
-
-
-/************************************************************
- * RENDER STUDENT TABLE
- ************************************************************/
-
-function renderStudents() {
-  const tbody = document.getElementById("studentsTableBody");
-  const search = document.getElementById("studentSearch").value
-    .trim()
-    .toLowerCase();
-
-  const selectedClass = document.getElementById("classFilter").value;
-
-  const filtered = allStudents.filter(student => {
-    const hallTicket = String(student.hallTicketNumber || "").toLowerCase();
-    const name = String(student.studentName || "").toLowerCase();
-    const father = String(student.fatherName || "").toLowerCase();
-
-    const matchesSearch =
-      hallTicket.includes(search) ||
-      name.includes(search) ||
-      father.includes(search);
-
-    const matchesClass =
-      !selectedClass ||
-      String(student.className || "").trim() === selectedClass;
-
-    return matchesSearch && matchesClass;
-  });
-
-  tbody.replaceChildren();
-
-  if (filtered.length === 0) {
-    const row = document.createElement("tr");
-    const cell = document.createElement("td");
-    cell.colSpan = 7;
-    cell.className = "empty";
-    cell.textContent = allStudents.length === 0
-      ? "No student records found in the database."
-      : "No matching students found.";
-    row.appendChild(cell);
-    tbody.appendChild(row);
-  } else {
-    filtered.forEach(student => {
-      const row = document.createElement("tr");
-
-      addCell(row,student.hallTicketNumber);
-      addCell(row,student.studentName);
-      addCell(row,student.fatherName);
-      addCell(row,student.className);
-      addCell(row,student.section);
-      addCell(row,student.academicYear);
-
-      const statusCell = document.createElement("td");
-      const badge = document.createElement("span");
-      const status = String(student.status || "Unknown").trim();
-
-      badge.className =
-        status.toLowerCase() === "active"
-          ? "status"
-          : "status inactive";
-
-      badge.textContent = status;
-      statusCell.appendChild(badge);
-      row.appendChild(statusCell);
-
-      tbody.appendChild(row);
-    });
-  }
-
-  document.getElementById("studentCount").textContent =
-    "Showing " + filtered.length + " of " + allStudents.length + " students";
-}
-
-function addCell(row,value) {
-  const cell = document.createElement("td");
-  cell.textContent = value == null ? "" : String(value);
-  row.appendChild(cell);
-}
-
-
-/************************************************************
- * LOGOUT
- ************************************************************/
-
-function logout() {
+function logout(){
+  const t=token();
+  if(t)api({action:"logout"}).catch(()=>{});
   sessionStorage.removeItem(TOKEN_KEY);
-  allStudents = [];
-  showLoginScreen();
+  allStudents=[];subjects=[];questions=[];exams=[];
+  document.getElementById("adminPin").value="";
+  document.getElementById("loginMessage").textContent="";
+  showLogin();
 }
-
-function showLoginScreen() {
-  document.getElementById("adminApp").style.display = "none";
-  document.getElementById("loginScreen").style.display = "flex";
-  document.getElementById("adminPin").value = "";
-  document.getElementById("loginMessage").textContent = "";
+async function loadAdminData(){
+  if(!token()){showLogin();return;}
+  notice("dashboardNotice","Loading live information from the assessment database...");
+  try{
+    const d=await api({action:"getAdminData"});
+    const s=d.stats||{};
+    document.getElementById("totalStudents").textContent=s.totalStudents||0;
+    document.getElementById("activeStudents").textContent=s.activeStudents||0;
+    document.getElementById("totalSubjects").textContent=s.totalSubjects||0;
+    document.getElementById("totalQuestions").textContent=s.totalQuestions||0;
+    document.getElementById("totalExams").textContent=s.totalExams||0;
+    allStudents=d.students||[];
+    renderStudents();populateStudentClasses();
+    document.getElementById("connectionStatus").textContent="Connected";
+    document.getElementById("lastUpdated").textContent=new Date().toLocaleString();
+    notice("dashboardNotice","Database connected successfully. Dashboard information is up to date.","success");
+    notice("studentNotice","Loaded "+allStudents.length+" student records.","success");
+  }catch(e){
+    if(e.message.toLowerCase().includes("session")){logout();return;}
+    notice("dashboardNotice",e.message,"error");
+    document.getElementById("connectionStatus").textContent="Connection failed";
+  }
 }
-
-
-/************************************************************
- * PAGE NAVIGATION
- ************************************************************/
-
-function showPage(name) {
-  document.querySelectorAll(".page").forEach(page => {
-    page.classList.remove("active");
-  });
-
-  document.querySelectorAll(".nav-btn[data-page]").forEach(button => {
-    button.classList.remove("active");
-  });
-
-  const page = document.getElementById("page-" + name);
-  if (page) page.classList.add("active");
-
-  const nav = document.querySelector(
-    '.nav-btn[data-page="' + name + '"]'
-  );
-
-  if (nav) nav.classList.add("active");
-
-  document.getElementById("topTitle").textContent =
-    pageTitles[name] || "Dashboard";
-
+function populateStudentClasses(){
+  const select=document.getElementById("classFilter"),old=select.value;
+  const values=[...new Set(allStudents.map(s=>s.className).filter(Boolean))];
+  select.innerHTML='<option value="">All Classes</option>'+values.map(v=>'<option>'+esc(v)+'</option>').join("");
+  select.value=values.includes(old)?old:"";
+}
+function renderStudents(){
+  const q=(document.getElementById("studentSearch")?.value||"").toLowerCase();
+  const cl=document.getElementById("classFilter")?.value||"";
+  const list=allStudents.filter(s=>(!cl||s.className===cl)&&[s.hallTicketNumber,s.studentName,s.fatherName].some(v=>String(v||"").toLowerCase().includes(q)));
+  document.getElementById("studentsTableBody").innerHTML=list.length?list.map(s=>'<tr><td>'+esc(s.hallTicketNumber)+'</td><td>'+esc(s.studentName)+'</td><td>'+esc(s.fatherName)+'</td><td>'+esc(s.className)+'</td><td>'+esc(s.section)+'</td><td>'+esc(s.academicYear)+'</td><td>'+statusBadge(s.status)+'</td></tr>').join(""):'<tr><td colspan="7" class="empty">No matching student records.</td></tr>';
+  document.getElementById("studentCount").textContent="Showing "+list.length+" of "+allStudents.length+" students";
+}
+function showPage(name){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn[data-page]").forEach(b=>b.classList.remove("active"));
+  document.getElementById("page-"+name)?.classList.add("active");
+  document.querySelector('.nav-btn[data-page="'+name+'"]')?.classList.add("active");
+  document.getElementById("topTitle").textContent=TITLES[name]||"Dashboard";
   document.getElementById("sidebar").classList.remove("open");
-
-  if (name === "students") {
-    renderStudents();
-  }
+  if(name==="students")renderStudents();
+  if(name==="subjects")loadSubjects();
+  if(name==="questions")loadQuestions();
+  if(name==="exams")loadExams();
+  if(name==="results")loadResults();
+  if(name==="attempts")loadAttempts();
+  if(name==="verification")loadVerification();
 }
+document.querySelectorAll(".nav-btn[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");}
 
+/* SUBJECTS */
+async function loadSubjects(){
+  try{const d=await api({action:"getSubjects"});subjects=d.subjects||[];renderSubjects();populateSubjectFilters();notice("subjectNotice","Loaded "+subjects.length+" subjects.","success");}
+  catch(e){notice("subjectNotice",e.message,"error");}
+}
+function populateSubjectFilters(){
+  const opts='<option value="">All Classes</option>'+CLASSES.map(c=>'<option>'+esc(c)+'</option>').join("");
+  document.getElementById("subjectClassFilter").innerHTML=opts;
+  document.getElementById("questionClassFilter").innerHTML=opts;
+  document.getElementById("examClassFilter").innerHTML=opts;
+  document.getElementById("questionSubjectFilter").innerHTML='<option value="">All Subjects</option>'+subjects.map(s=>'<option value="'+esc(s["Subject ID"])+'">'+esc(s["Subject Name"])+' · '+esc(s.Class)+'</option>').join("");
+}
+function openSubjectForm(item){
+  document.getElementById("subjectForm").reset();
+  document.getElementById("subjectId").value="";
+  fillClassSelects();
+  document.getElementById("subjectFormTitle").textContent=item?"Edit Subject":"Add Subject";
+  if(item){
+    document.getElementById("subjectId").value=item["Subject ID"];
+    document.getElementById("subjectName").value=item["Subject Name"];
+    document.getElementById("subjectClass").value=item.Class;
+    document.getElementById("subjectStatus").value=item.Status||"Active";
+  }
+  openForm("subjectFormPanel");
+}
+document.getElementById("subjectForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const subject={"Subject ID":document.getElementById("subjectId").value,"Subject Name":document.getElementById("subjectName").value.trim(),Class:document.getElementById("subjectClass").value,Status:document.getElementById("subjectStatus").value};
+  try{await api({action:"saveSubject",subject});closeForm("subjectFormPanel");await loadSubjects();await loadAdminData();}
+  catch(err){notice("subjectNotice",err.message,"error");}
+});
+function renderSubjects(){
+  const q=(document.getElementById("subjectSearch")?.value||"").toLowerCase(),cl=document.getElementById("subjectClassFilter")?.value||"";
+  const list=subjects.filter(s=>(!cl||s.Class===cl)&&[s["Subject ID"],s["Subject Name"]].some(v=>String(v||"").toLowerCase().includes(q)));
+  document.getElementById("subjectsBody").innerHTML=list.length?list.map(s=>'<tr><td>'+esc(s["Subject ID"])+'</td><td>'+esc(s["Subject Name"])+'</td><td>'+esc(s.Class)+'</td><td>'+statusBadge(s.Status)+'</td><td class="row-actions"><button class="secondary-btn small-btn" data-edit-subject="'+esc(s["Subject ID"])+'">Edit</button><button class="secondary-btn small-btn" data-subject-status="'+esc(s["Subject ID"])+'" data-status="'+(String(s.Status).toLowerCase()==="active"?"Inactive":"Active")+'">'+(String(s.Status).toLowerCase()==="active"?"Deactivate":"Activate")+'</button></td></tr>').join(""):'<tr><td colspan="5" class="empty">No subjects found.</td></tr>';
+}
+document.getElementById("subjectsBody").addEventListener("click",async e=>{
+  const edit=e.target.closest("[data-edit-subject]"),status=e.target.closest("[data-subject-status]");
+  if(edit){const item=subjects.find(s=>s["Subject ID"]===edit.dataset.editSubject);if(item)openSubjectForm(item);}
+  if(status){try{await api({action:"setSubjectStatus",subjectId:status.dataset.subjectStatus,status:status.dataset.status});await loadSubjects();await loadAdminData();}catch(err){notice("subjectNotice",err.message,"error");}}
+});
 
-/************************************************************
- * NAVIGATION BUTTONS
- ************************************************************/
+/* QUESTIONS */
+async function loadQuestions(){
+  try{const d=await api({action:"getQuestions"});questions=d.questions||[];renderQuestions();populateSubjectFilters();notice("questionNotice","Loaded "+questions.length+" questions.","success");}
+  catch(e){notice("questionNotice",e.message,"error");}
+}
+function updateQuestionSubjects(){
+  const cl=document.getElementById("questionClass").value;
+  const list=subjects.filter(s=>s.Class===cl&&String(s.Status).toLowerCase()==="active");
+  document.getElementById("questionSubject").innerHTML='<option value="">Select subject</option>'+list.map(s=>'<option value="'+esc(s["Subject ID"])+'">'+esc(s["Subject Name"])+'</option>').join("");
+}
+function openQuestionForm(item){
+  document.getElementById("questionForm").reset();
+  document.getElementById("questionId").value="";
+  document.getElementById("questionMarks").value="1";
+  fillClassSelects();
+  document.getElementById("questionFormTitle").textContent=item?"Edit Question":"Add Question";
+  if(item){
+    document.getElementById("questionId").value=item["Question ID"];
+    document.getElementById("questionClass").value=item.Class;
+    updateQuestionSubjects();
+    document.getElementById("questionSubject").value=item["Subject ID"];
+    document.getElementById("questionText").value=item.Question;
+    document.getElementById("optionA").value=item["Option A"];
+    document.getElementById("optionB").value=item["Option B"];
+    document.getElementById("optionC").value=item["Option C"];
+    document.getElementById("optionD").value=item["Option D"];
+    document.getElementById("correctAnswer").value=item["Correct Answer"];
+    document.getElementById("questionMarks").value=item.Marks;
+    document.getElementById("questionStatus").value=item.Status||"Active";
+  }else{updateQuestionSubjects();}
+  openForm("questionFormPanel");
+}
+document.getElementById("questionForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const question={"Question ID":document.getElementById("questionId").value,Class:document.getElementById("questionClass").value,"Subject ID":document.getElementById("questionSubject").value,Question:document.getElementById("questionText").value.trim(),"Option A":document.getElementById("optionA").value.trim(),"Option B":document.getElementById("optionB").value.trim(),"Option C":document.getElementById("optionC").value.trim(),"Option D":document.getElementById("optionD").value.trim(),"Correct Answer":document.getElementById("correctAnswer").value,Marks:document.getElementById("questionMarks").value,Status:document.getElementById("questionStatus").value};
+  try{await api({action:"saveQuestion",question});closeForm("questionFormPanel");await loadQuestions();await loadAdminData();}
+  catch(err){notice("questionNotice",err.message,"error");}
+});
+function renderQuestions(){
+  const q=(document.getElementById("questionSearch")?.value||"").toLowerCase(),cl=document.getElementById("questionClassFilter")?.value||"",sub=document.getElementById("questionSubjectFilter")?.value||"",st=document.getElementById("questionStatusFilter")?.value||"";
+  const list=questions.filter(x=>(!cl||x.Class===cl)&&(!sub||x["Subject ID"]===sub)&&(!st||x.Status===st)&&String(x.Question||"").toLowerCase().includes(q));
+  document.getElementById("questionsBody").innerHTML=list.length?list.map(x=>'<tr><td>'+esc(x.Question)+'</td><td>'+esc(x.Class)+'</td><td>'+esc(subjectName(x["Subject ID"]))+'</td><td>'+esc(x["Correct Answer"])+'</td><td>'+esc(x.Marks)+'</td><td>'+statusBadge(x.Status)+'</td><td class="row-actions"><button class="secondary-btn small-btn" data-edit-question="'+esc(x["Question ID"])+'">Edit</button><button class="danger-btn small-btn" data-delete-question="'+esc(x["Question ID"])+'">Delete</button></td></tr>').join(""):'<tr><td colspan="7" class="empty">No questions found.</td></tr>';
+}
+function subjectName(id){const s=subjects.find(x=>x["Subject ID"]===id);return s?s["Subject Name"]:id;}
+document.getElementById("questionsBody").addEventListener("click",async e=>{
+  const edit=e.target.closest("[data-edit-question]"),del=e.target.closest("[data-delete-question]");
+  if(edit){const item=questions.find(x=>x["Question ID"]===edit.dataset.editQuestion);if(item)openQuestionForm(item);}
+  if(del&&confirm("Delete this question permanently? This cannot be undone.")){
+    try{await api({action:"deleteQuestion",questionId:del.dataset.deleteQuestion});await loadQuestions();await loadAdminData();}
+    catch(err){notice("questionNotice",err.message,"error");}
+  }
+});
 
-document.querySelectorAll(".nav-btn[data-page]").forEach(button => {
-  button.addEventListener("click",() => {
-    showPage(button.dataset.page);
+/* EXAM MANAGEMENT */
+async function loadExams(){
+  try{const d=await api({action:"getExams"});exams=d.exams||[];renderExams();notice("examNotice","Loaded "+exams.length+" assessments.","success");}
+  catch(e){notice("examNotice",e.message,"error");}
+}
+function updateExamSubjectOptions(){
+  const cl=document.getElementById("examClass").value;
+  const active=subjects.filter(s=>s.Class===cl&&String(s.Status).toLowerCase()==="active");
+  document.querySelectorAll(".exam-subject-select").forEach(sel=>{
+    const old=sel.value;
+    sel.innerHTML='<option value="">Select subject</option>'+active.map(s=>'<option value="'+esc(s["Subject ID"])+'">'+esc(s["Subject Name"])+'</option>').join("");
+    if(active.some(s=>s["Subject ID"]===old))sel.value=old;
   });
+}
+function openExamForm(item){
+  document.getElementById("examForm").reset();
+  document.getElementById("examId").value="";
+  document.getElementById("examYear").value="2026-27";
+  document.getElementById("examDuration").value="30";
+  document.getElementById("examStatus").value="Inactive";
+  document.getElementById("examSubjectRows").innerHTML="";
+  examSubjectAssignments=[];
+  fillClassSelects();
+  document.getElementById("examFormTitle").textContent=item?"Edit Assessment":"Create Assessment";
+  if(item){
+    document.getElementById("examId").value=item["Exam ID"];
+    document.getElementById("examName").value=item["Exam Name"];
+    document.getElementById("examClass").value=item.Class;
+    document.getElementById("examYear").value=item["Academic Year"];
+    document.getElementById("examDuration").value=item["Duration (Minutes)"];
+    document.getElementById("examStart").value=toDateInput(item["Start Date"]);
+    document.getElementById("examEnd").value=toDateInput(item["End Date"]);
+    document.getElementById("examStatus").value=item.Status||"Inactive";
+    updateExamSubjectOptions();
+    api({action:"getExamSubjects",examId:item["Exam ID"]}).then(d=>{
+      document.getElementById("examSubjectRows").innerHTML="";
+      (d.examSubjects||[]).forEach(x=>addExamSubjectRow(x));
+      if(!(d.examSubjects||[]).length)addExamSubjectRow();
+      calculateExamTotals();
+    }).catch(err=>notice("examNotice",err.message,"error"));
+  }else{
+    updateExamSubjectOptions();
+    addExamSubjectRow();
+  }
+  openForm("examFormPanel");
+}
+function toDateInput(value){
+  if(!value)return "";
+  const s=String(value);
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
+  const d=new Date(s);
+  if(isNaN(d.getTime()))return "";
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function addExamSubjectRow(item){
+  const div=document.createElement("div");
+  div.className="subject-assignment";
+  div.innerHTML='<div class="field"><label>Subject</label><select class="exam-subject-select" required><option value="">Select subject</option></select></div><div class="field"><label>Questions</label><input class="exam-question-count" type="number" min="1" value="'+esc(item?item["Questions Count"]:10)+'" required></div><div class="field"><label>Marks / Question</label><input class="exam-marks-per" type="number" min="0.01" step="0.01" value="'+esc(item?item["Marks Per Question"]:1)+'" required></div><button type="button" class="danger-btn remove-assignment">Remove</button>';
+  document.getElementById("examSubjectRows").appendChild(div);
+  updateExamSubjectOptions();
+  if(item)div.querySelector(".exam-subject-select").value=item["Subject ID"];
+  div.querySelectorAll("input,select").forEach(el=>el.addEventListener("input",calculateExamTotals));
+  div.querySelector(".remove-assignment").addEventListener("click",()=>{div.remove();calculateExamTotals();});
+  calculateExamTotals();
+}
+function calculateExamTotals(){
+  let count=0,marks=0;
+  document.querySelectorAll(".subject-assignment").forEach(row=>{
+    const n=Number(row.querySelector(".exam-question-count").value)||0;
+    const m=Number(row.querySelector(".exam-marks-per").value)||0;
+    count+=n;marks+=n*m;
+  });
+  document.getElementById("examTotalQuestions").textContent=count;
+  document.getElementById("examTotalMarks").textContent=marks.toFixed(2).replace(/\.00$/,"");
+}
+document.getElementById("examForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const exam={"Exam ID":document.getElementById("examId").value,"Exam Name":document.getElementById("examName").value.trim(),Class:document.getElementById("examClass").value,"Academic Year":document.getElementById("examYear").value.trim(),"Duration (Minutes)":document.getElementById("examDuration").value,"Start Date":document.getElementById("examStart").value,"End Date":document.getElementById("examEnd").value,Status:document.getElementById("examStatus").value};
+  const examSubjects=[...document.querySelectorAll(".subject-assignment")].map(row=>({"Subject ID":row.querySelector(".exam-subject-select").value,"Questions Count":row.querySelector(".exam-question-count").value,"Marks Per Question":row.querySelector(".exam-marks-per").value}));
+  try{await api({action:"saveExam",exam,examSubjects});closeForm("examFormPanel");await loadExams();await loadAdminData();}
+  catch(err){notice("examNotice",err.message,"error");}
+});
+function renderExams(){
+  const q=(document.getElementById("examSearch")?.value||"").toLowerCase(),cl=document.getElementById("examClassFilter")?.value||"";
+  const list=exams.filter(x=>(!cl||x.Class===cl)&&String(x["Exam Name"]||"").toLowerCase().includes(q));
+  document.getElementById("examsBody").innerHTML=list.length?list.map(x=>'<tr><td>'+esc(x["Exam Name"])+'</td><td>'+esc(x.Class)+'</td><td>'+esc(x["Academic Year"])+'</td><td>'+esc(x["Duration (Minutes)"])+' min</td><td>'+esc(x["Questions Per Subject"])+'</td><td>'+esc(x["Total Marks"])+'</td><td>'+statusBadge(x.Status)+'</td><td class="row-actions"><button class="secondary-btn small-btn" data-edit-exam="'+esc(x["Exam ID"])+'">Edit</button><button class="secondary-btn small-btn" data-exam-status="'+esc(x["Exam ID"])+'" data-status="'+(String(x.Status).toLowerCase()==="active"?"Inactive":"Active")+'">'+(String(x.Status).toLowerCase()==="active"?"Deactivate":"Activate")+'</button></td></tr>').join(""):'<tr><td colspan="8" class="empty">No assessments found.</td></tr>';
+}
+document.getElementById("examsBody").addEventListener("click",async e=>{
+  const edit=e.target.closest("[data-edit-exam]"),status=e.target.closest("[data-exam-status]");
+  if(edit){const item=exams.find(x=>x["Exam ID"]===edit.dataset.editExam);if(item)openExamForm(item);}
+  if(status){try{await api({action:"setExamStatus",examId:status.dataset.examStatus,status:status.dataset.status});await loadExams();await loadAdminData();}catch(err){notice("examNotice",err.message,"error");}}
 });
 
-
-/************************************************************
- * MOBILE SIDEBAR
- ************************************************************/
-
-function toggleSidebar() {
-  document.getElementById("sidebar").classList.toggle("open");
+/* RESULTS */
+async function loadResults(){
+  try{const d=await api({action:"getResults"});results=d.results||[];renderResults();}
+  catch(e){document.getElementById("resultsBody").innerHTML='<tr><td colspan="10" class="empty">'+esc(e.message)+'</td></tr>';}
+}
+function renderResults(){
+  const q=(document.getElementById("resultSearch")?.value||"").toLowerCase();
+  const list=results.filter(x=>[x["Student Name"],x["Hall Ticket Number"],x["Exam ID"]].some(v=>String(v||"").toLowerCase().includes(q)));
+  document.getElementById("resultsBody").innerHTML=list.length?list.map(x=>'<tr><td>'+esc(x["Hall Ticket Number"])+'</td><td>'+esc(x["Student Name"])+'</td><td>'+esc(x.Class)+'</td><td>'+esc(x["Exam ID"])+'</td><td>'+esc(x.Attempted)+'</td><td>'+esc(x.Correct)+'</td><td>'+esc(x["Marks Obtained"])+' / '+esc(x["Total Marks"])+'</td><td>'+esc(x.Percentage)+'%</td><td>'+esc(x["Result Status"])+'</td><td>'+esc(x["Completed At"])+'</td></tr>').join(""):'<tr><td colspan="10" class="empty">No result records found yet.</td></tr>';
 }
 
+/* ATTEMPTS */
+async function loadAttempts(){
+  try{const d=await api({action:"getAttempts"});attempts=d.attempts||[];document.getElementById("attemptsBody").innerHTML=attempts.length?attempts.map(x=>'<tr><td>'+esc(x["Attempt ID"])+'</td><td>'+esc(x["Exam ID"])+'</td><td>'+esc(x["Hall Ticket Number"])+'</td><td>'+esc(x["Started At"])+'</td><td>'+esc(x["Expected End Time"])+'</td><td>'+esc(x["Submitted At"])+'</td><td>'+esc(x["Attempt Status"])+'</td></tr>').join(""):'<tr><td colspan="7" class="empty">No attempt records found yet.</td></tr>';}
+  catch(e){document.getElementById("attemptsBody").innerHTML='<tr><td colspan="7" class="empty">'+esc(e.message)+'</td></tr>';}
+}
 
-/************************************************************
- * ENTER KEY LOGIN
- ************************************************************/
+/* VERIFICATION */
+async function loadVerification(){
+  try{const d=await api({action:"getVerificationLogs"});verificationLogs=d.logs||[];document.getElementById("verificationBody").innerHTML=verificationLogs.length?verificationLogs.map(x=>'<tr><td>'+esc(x["Verification ID"])+'</td><td>'+esc(x["Exam ID"])+'</td><td>'+esc(x["Hall Ticket Number"])+'</td><td>'+esc(x["Verification Method"])+'</td><td>'+esc(x["Consent Confirmed"])+'</td><td>'+esc(x["Verified At"])+'</td><td>'+esc(x["Verification Status"])+'</td></tr>').join(""):'<tr><td colspan="7" class="empty">No verification records found yet.</td></tr>';}
+  catch(e){document.getElementById("verificationBody").innerHTML='<tr><td colspan="7" class="empty">'+esc(e.message)+'</td></tr>';}
+}
 
-document.getElementById("adminPin").addEventListener("keydown",event => {
-  if (event.key === "Enter") {
-    adminLogin();
-  }
-});
-
-
-/************************************************************
- * RESTORE EXISTING SESSION
- ************************************************************/
-
-document.addEventListener("DOMContentLoaded",() => {
-  const token = sessionStorage.getItem(TOKEN_KEY);
-
-  if (token) {
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("adminApp").style.display = "block";
+/* INITIALIZATION */
+document.getElementById("adminPin").addEventListener("keydown",e=>{if(e.key==="Enter")adminLogin();});
+document.addEventListener("DOMContentLoaded",()=>{
+  fillClassSelects();
+  if(token()){
+    document.getElementById("loginScreen").style.display="none";
+    document.getElementById("adminApp").style.display="block";
     loadAdminData();
   }
 });
 </script>
-
 </body>
 </html>
