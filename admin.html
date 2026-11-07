@@ -1,662 +1,204 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Raagasree | Assessment Admin</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-
-<style>
-:root {
-  --navy:#10264a;
-  --navy2:#193b69;
-  --gold:#c99b42;
-  --bg:#f3f5f9;
-  --white:#fff;
-  --text:#202b3c;
-  --muted:#7c8798;
-  --border:#e5e9f0;
-  --red:#d9534f;
-  --green:#21865b;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.login-screen{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:linear-gradient(135deg,#0c1c38,#193b69);
-}
-.login-card{
-  width:100%;
-  max-width:420px;
-  background:#fff;
-  border-radius:18px;
-  padding:38px;
-  text-align:center;
-  box-shadow:0 20px 60px #0003;
-}
-.logo{
-  width:64px;height:64px;
-  border-radius:16px;
-  display:grid;place-items:center;
-  margin:0 auto 18px;
-  background:var(--navy);
-  color:var(--gold);
-  font-family:'Playfair Display',serif;
-  font-size:32px;
-}
-.login-card h1{
-  font-family:'Playfair Display',serif;
-  color:var(--navy);
-  font-size:25px;
-  margin:0 0 5px;
-}
-.login-card p{color:var(--muted);font-size:13px}
-.field{text-align:left;margin:20px 0}
-.field label{
-  display:block;
-  font-size:13px;
-  font-weight:700;
-  margin-bottom:8px;
-}
-.field input,.field select,.field textarea{
-  width:100%;
-  padding:12px 13px;
-  border:1px solid var(--border);
-  border-radius:9px;
-  outline:none;
-  background:#fff;
-  color:var(--text);
-}
-.field input:focus,.field select:focus,.field textarea:focus{
-  border-color:var(--gold);
-}
-.primary-btn{
-  border:0;
-  border-radius:9px;
-  padding:12px 18px;
-  color:white;
-  background:var(--navy);
-  font-weight:700;
-}
-.primary-btn:hover{background:var(--navy2)}
-.gold-btn{background:var(--gold);color:#17243b}
-.full{width:100%}
-.login-note{font-size:11px!important;margin-top:18px}
-#loginMessage{color:var(--red);font-size:12px;min-height:18px}
-
-.app{display:none;min-height:100vh}
-.sidebar{
-  width:255px;
-  background:var(--navy);
-  color:#fff;
-  position:fixed;
-  inset:0 auto 0 0;
-  padding:23px 15px;
-  overflow-y:auto;
-  z-index:10;
-}
-.brand{
-  padding:5px 12px 24px;
-  border-bottom:1px solid #ffffff20;
-}
-.brand strong{
-  display:block;
-  font-family:'Playfair Display',serif;
-  font-size:19px;
-}
-.brand span{font-size:11px;color:#c9d3e2}
-.brand small{
-  display:block;color:var(--gold);
-  font-size:10px;letter-spacing:1.4px;
-  margin-top:7px;
-}
-.nav-label{
-  color:#91a4bf;
-  font-size:10px;
-  letter-spacing:1.5px;
-  padding:22px 12px 9px;
-}
-.nav-btn{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  width:100%;
-  padding:12px;
-  border:0;
-  border-radius:8px;
-  color:#dce5f2;
-  background:transparent;
-  text-align:left;
-  font-size:13px;
-  margin:3px 0;
-}
-.nav-btn:hover,.nav-btn.active{
-  background:#ffffff18;
-  color:#fff;
-}
-.nav-btn.active{border-left:3px solid var(--gold)}
-.nav-icon{width:20px;text-align:center;font-size:16px}
-.sidebar-bottom{
-  border-top:1px solid #ffffff20;
-  margin-top:25px;
-  padding:17px 10px;
-  font-size:11px;
-  color:#b6c3d5;
-}
-.main{
-  margin-left:255px;
-  min-height:100vh;
-}
-.topbar{
-  height:72px;
-  background:#fff;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 30px;
-  position:sticky;
-  top:0;
-  z-index:5;
-}
-.topbar h2{font-size:17px;margin:0;color:var(--navy)}
-.admin-tag{
-  background:#f6f0e4;
-  color:#8d6726;
-  padding:7px 12px;
-  border-radius:20px;
-  font-size:11px;
-  font-weight:700;
-}
-.content{padding:28px 30px}
-.page{display:none}
-.page.active{display:block}
-.page-heading{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  flex-wrap:wrap;
-  margin-bottom:23px;
-}
-.page-heading h1{
-  font-family:'Playfair Display',serif;
-  font-size:25px;
-  color:var(--navy);
-  margin:0 0 5px;
-}
-.page-heading p{margin:0;color:var(--muted);font-size:12px}
-.cards{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:16px;
-  margin-bottom:24px;
-}
-.stat-card,.panel{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:20px;
-}
-.stat-card small{color:var(--muted);font-size:12px}
-.stat-card strong{
-  display:block;
-  font-size:27px;
-  color:var(--navy);
-  margin-top:10px;
-}
-.stat-card span{font-size:11px;color:var(--muted)}
-.panel{margin-bottom:20px}
-.panel h3{margin:0 0 7px;color:var(--navy);font-size:15px}
-.panel p{color:var(--muted);font-size:12px}
-.quick-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
-}
-.quick-btn{
-  padding:16px;
-  text-align:left;
-  border:1px solid var(--border);
-  background:#fff;
-  border-radius:10px;
-  color:var(--navy);
-  font-weight:700;
-}
-.quick-btn:hover{border-color:var(--gold);background:#fffaf0}
-.quick-btn span{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:6px}
-.toolbar{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:15px;
-}
-.toolbar input,.toolbar select{
-  padding:10px 12px;
-  border:1px solid var(--border);
-  border-radius:8px;
-  background:#fff;
-  min-width:180px;
-}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:650px}
-th,td{
-  text-align:left;
-  padding:13px 12px;
-  border-bottom:1px solid var(--border);
-  font-size:12px;
-}
-th{
-  color:#69778b;
-  font-size:10px;
-  text-transform:uppercase;
-  letter-spacing:.6px;
-  background:#f8f9fb;
-}
-.empty{text-align:center;color:var(--muted);padding:35px}
-.status{
-  display:inline-block;
-  border-radius:20px;
-  padding:5px 9px;
-  background:#edf6f0;
-  color:var(--green);
-  font-size:10px;
-  font-weight:700;
-}
-.notice{
-  background:#fff8e9;
-  border:1px solid #efdfb8;
-  color:#775a24;
-  padding:14px 16px;
-  border-radius:9px;
-  font-size:12px;
-  line-height:1.6;
-  margin-bottom:18px;
-}
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:0 18px;
-}
-.form-grid .field{margin:10px 0}
-.form-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
-.secondary-btn{
-  background:#fff;
-  border:1px solid var(--border);
-  color:var(--navy);
-  padding:11px 16px;
-  border-radius:8px;
-  font-weight:700;
-}
-.mobile-menu{
-  display:none;
-  border:0;
-  background:transparent;
-  color:var(--navy);
-  font-size:22px;
-}
-.footer{
-  padding:20px 0;
-  color:var(--muted);
-  font-size:10px;
-  text-align:center;
-}
-@media(max-width:1050px){
-  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:700px){
-  .sidebar{transform:translateX(-100%);transition:.25s}
-  .sidebar.open{transform:translateX(0)}
-  .main{margin-left:0}
-  .topbar{padding:0 16px}
-  .mobile-menu{display:block}
-  .content{padding:20px 15px}
-  .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .stat-card{padding:14px}
-  .stat-card strong{font-size:22px}
-  .quick-grid{grid-template-columns:1fr}
-  .form-grid{grid-template-columns:1fr}
-  .page-heading h1{font-size:22px}
-}
-</style>
-</head>
-
-<body>
-
-<!-- ADMIN LOGIN -->
-<section class="login-screen" id="loginScreen">
-  <div class="login-card">
-    <div class="logo">R</div>
-    <h1>Raagasree Admin</h1>
-    <p>Online Assessment Management System</p>
-
-    <div class="field">
-      <label>Administrator PIN</label>
-      <input type="password" id="adminPin" placeholder="Enter your admin PIN" inputmode="numeric">
-    </div>
-
-    <button class="primary-btn full" onclick="adminLogin()">Continue to Dashboard</button>
-    <div id="loginMessage"></div>
-    <p class="login-note">RAAGASREE E.M HIGH SCHOOL · V. KOTA</p>
-  </div>
-</section>
-
-<!-- ADMIN APPLICATION -->
-<div class="app" id="adminApp">
-
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <strong>RAAGASREE</strong>
-      <span>E.M HIGH SCHOOL · V. KOTA</span>
-      <small>ASSESSMENT ADMINISTRATION</small>
-    </div>
-
-    <div class="nav-label">MAIN MENU</div>
-    <button class="nav-btn active" data-page="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
-    <button class="nav-btn" data-page="students"><span class="nav-icon">♙</span>Students</button>
-    <button class="nav-btn" data-page="subjects"><span class="nav-icon">▤</span>Subjects</button>
-
-    <div class="nav-label">EXAMINATION</div>
-    <button class="nav-btn" data-page="questions"><span class="nav-icon">☷</span>Question Bank</button>
-    <button class="nav-btn" data-page="exams"><span class="nav-icon">◷</span>Exam Management</button>
-    <button class="nav-btn" data-page="results"><span class="nav-icon">▥</span>Results</button>
-
-    <div class="nav-label">SECURITY</div>
-    <button class="nav-btn" data-page="verification"><span class="nav-icon">◇</span>Verification Logs</button>
-    <button class="nav-btn" data-page="settings"><span class="nav-icon">⚙</span>Settings</button>
-
-    <div class="sidebar-bottom">
-      Academic Year 2026–27<br>
-      Excellence in Every Step
-      <br><br>
-      <button class="nav-btn" onclick="logout()">↪ &nbsp; Logout</button>
-    </div>
-  </aside>
-
-  <main class="main">
-    <header class="topbar">
-      <div style="display:flex;align-items:center;gap:12px">
-        <button class="mobile-menu" onclick="toggleSidebar()">☰</button>
-        <h2 id="topTitle">Dashboard</h2>
-      </div>
-      <div class="admin-tag">ADMINISTRATOR</div>
-    </header>
-
-    <div class="content">
-
-      <!-- DASHBOARD -->
-      <section class="page active" id="page-dashboard">
-        <div class="page-heading">
-          <div>
-            <h1>Dashboard Overview</h1>
-            <p>Manage your school's online examinations.</p>
-          </div>
-          <span class="status">Academic Year 2026–27</span>
-        </div>
-
-        <div class="notice">
-          Welcome to the Raagasree Online Assessment Administration Panel.
-          Your dashboard will display live database information after backend integration.
-        </div>
-
-        <div class="cards">
-          <div class="stat-card"><small>Total Students</small><strong id="totalStudents">—</strong><span>Registered students</span></div>
-          <div class="stat-card"><small>Total Subjects</small><strong id="totalSubjects">—</strong><span>Configured subjects</span></div>
-          <div class="stat-card"><small>Question Bank</small><strong id="totalQuestions">—</strong><span>Available questions</span></div>
-          <div class="stat-card"><small>Total Examinations</small><strong id="totalExams">—</strong><span>Created examinations</span></div>
-        </div>
-
-        <div class="panel">
-          <h3>Quick Actions</h3>
-          <p>Choose a section to manage your assessment system.</p>
-          <div class="quick-grid">
-            <button class="quick-btn" onclick="showPage('students')">＋ Add Students<span>Manage student records</span></button>
-            <button class="quick-btn" onclick="showPage('questions')">＋ Add Questions<span>Build your question bank</span></button>
-            <button class="quick-btn" onclick="showPage('exams')">＋ Create Examination<span>Configure a new examination</span></button>
-          </div>
-        </div>
-
-        <div class="panel">
-          <h3>System Information</h3>
-          <div class="table-wrap">
-            <table>
-              <tbody>
-                <tr><td>School</td><td>Raagasree E.M High School</td></tr>
-                <tr><td>Location</td><td>V. Kota</td></tr>
-                <tr><td>Academic Year</td><td>2026–27</td></tr>
-                <tr><td>Backend Connection</td><td id="connectionStatus">Not connected yet</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- STUDENTS -->
-      <section class="page" id="page-students">
-        <div class="page-heading">
-          <div><h1>Student Management</h1><p>Add and manage student records.</p></div>
-          <button class="primary-btn" onclick="showForm('studentForm')">＋ Add Student</button>
-        </div>
-        <div class="notice">Student records will be loaded from the Students sheet after backend connection.</div>
-        <div class="panel" id="studentForm" style="display:none">
-          <h3>Student Details</h3>
-          <div class="form-grid">
-            <div class="field"><label>Hall Ticket Number</label><input placeholder="Enter hall ticket number"></div>
-            <div class="field"><label>Student Name</label><input placeholder="Enter student name"></div>
-            <div class="field"><label>Father Name</label><input placeholder="Enter father name"></div>
-            <div class="field"><label>Date of Birth</label><input type="date"></div>
-            <div class="field"><label>Class</label><select><option value="">Select class</option><option>LKG</option><option>UKG</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
-            <div class="field"><label>Section</label><input placeholder="A / B"></div>
-            <div class="field"><label>Academic Year</label><input value="2026-27"></div>
-            <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option></select></div>
-          </div>
-          <div class="form-actions">
-            <button class="primary-btn" onclick="notConnected()">Save Student</button>
-            <button class="secondary-btn" onclick="hideForm('studentForm')">Cancel</button>
-          </div>
-        </div>
-        <div class="panel">
-          <div class="toolbar"><input placeholder="Search by name or hall ticket" disabled><select disabled><option>All Classes</option></select></div>
-          <div class="table-wrap"><table><thead><tr><th>Hall Ticket</th><th>Student Name</th><th>Class</th><th>Section</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="6" class="empty">Student data will appear here after connection.</td></tr></tbody></table></div>
-        </div>
-      </section>
-
-      <!-- SUBJECTS -->
-      <section class="page" id="page-subjects">
-        <div class="page-heading">
-          <div><h1>Subject Management</h1><p>Configure subjects for each class.</p></div>
-          <button class="primary-btn" onclick="showForm('subjectForm')">＋ Add Subject</button>
-        </div>
-        <div class="panel" id="subjectForm" style="display:none">
-          <h3>New Subject</h3>
-          <div class="form-grid">
-            <div class="field"><label>Subject ID</label><input placeholder="Example: ENG01"></div>
-            <div class="field"><label>Subject Name</label><input placeholder="Enter subject name"></div>
-            <div class="field"><label>Class</label><select><option>Select class</option><option>LKG</option><option>UKG</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
-            <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option></select></div>
-          </div>
-          <div class="form-actions"><button class="primary-btn" onclick="notConnected()">Save Subject</button><button class="secondary-btn" onclick="hideForm('subjectForm')">Cancel</button></div>
-        </div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Subject ID</th><th>Subject Name</th><th>Class</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="5" class="empty">Subject data will appear here after connection.</td></tr></tbody></table></div></div>
-      </section>
-
-      <!-- QUESTION BANK -->
-      <section class="page" id="page-questions">
-        <div class="page-heading">
-          <div><h1>Question Bank</h1><p>Create and maintain multiple-choice questions.</p></div>
-          <button class="primary-btn" onclick="showForm('questionForm')">＋ Add Question</button>
-        </div>
-        <div class="notice">Each question supports four options, one correct answer and configurable marks.</div>
-        <div class="panel" id="questionForm" style="display:none">
-          <h3>Question Details</h3>
-          <div class="form-grid">
-            <div class="field"><label>Question ID</label><input placeholder="Unique question ID"></div>
-            <div class="field"><label>Class</label><select><option>Select class</option><option>LKG</option><option>UKG</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
-            <div class="field"><label>Subject ID</label><input placeholder="Subject ID"></div>
-            <div class="field"><label>Marks</label><input type="number" min="1" value="1"></div>
-          </div>
-          <div class="field"><label>Question</label><textarea rows="3" placeholder="Enter your question"></textarea></div>
-          <div class="form-grid">
-            <div class="field"><label>Option A</label><input placeholder="Option A"></div>
-            <div class="field"><label>Option B</label><input placeholder="Option B"></div>
-            <div class="field"><label>Option C</label><input placeholder="Option C"></div>
-            <div class="field"><label>Option D</label><input placeholder="Option D"></div>
-            <div class="field"><label>Correct Answer</label><select><option>Select answer</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
-            <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option></select></div>
-          </div>
-          <div class="form-actions"><button class="primary-btn" onclick="notConnected()">Save Question</button><button class="secondary-btn" onclick="hideForm('questionForm')">Cancel</button></div>
-        </div>
-        <div class="panel">
-          <div class="toolbar"><input placeholder="Search questions" disabled><select disabled><option>All Classes</option></select><select disabled><option>All Subjects</option></select></div>
-          <div class="table-wrap"><table><thead><tr><th>Question ID</th><th>Class</th><th>Subject</th><th>Question</th><th>Marks</th><th>Status</th></tr></thead><tbody><tr><td colspan="6" class="empty">Question bank will appear here after connection.</td></tr></tbody></table></div>
-        </div>
-      </section>
-
-      <!-- EXAMS -->
-      <section class="page" id="page-exams">
-        <div class="page-heading">
-          <div><h1>Exam Management</h1><p>Create, configure and control examinations.</p></div>
-          <button class="primary-btn" onclick="showForm('examForm')">＋ Create Exam</button>
-        </div>
-        <div class="panel" id="examForm" style="display:none">
-          <h3>Examination Configuration</h3>
-          <div class="form-grid">
-            <div class="field"><label>Exam ID</label><input placeholder="Example: SA1-2026"></div>
-            <div class="field"><label>Exam Name</label><input placeholder="Example: SA1 Examination"></div>
-            <div class="field"><label>Class</label><select><option>Select class</option><option>LKG</option><option>UKG</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
-            <div class="field"><label>Academic Year</label><input value="2026-27"></div>
-            <div class="field"><label>Duration (Minutes)</label><input type="number" placeholder="60"></div>
-            <div class="field"><label>Total Marks</label><input type="number" placeholder="60"></div>
-            <div class="field"><label>Questions Per Subject</label><input type="number" placeholder="10"></div>
-            <div class="field"><label>Status</label><select><option>Draft</option><option>Active</option><option>Inactive</option></select></div>
-            <div class="field"><label>Start Date</label><input type="date"></div>
-            <div class="field"><label>End Date</label><input type="date"></div>
-          </div>
-          <div class="form-actions"><button class="primary-btn" onclick="notConnected()">Save Examination</button><button class="secondary-btn" onclick="hideForm('examForm')">Cancel</button></div>
-        </div>
-        <div class="panel"><h3>Configured Examinations</h3><div class="table-wrap"><table><thead><tr><th>Exam ID</th><th>Exam Name</th><th>Class</th><th>Duration</th><th>Total Marks</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="7" class="empty">Examination data will appear here after connection.</td></tr></tbody></table></div></div>
-      </section>
-
-      <!-- RESULTS -->
-      <section class="page" id="page-results">
-        <div class="page-heading"><div><h1>Examination Results</h1><p>View student performance and examination reports.</p></div></div>
-        <div class="notice">Results will be calculated and displayed after student submissions are connected to the backend.</div>
-        <div class="panel">
-          <div class="toolbar"><select disabled><option>Select Examination</option></select><select disabled><option>Select Class</option></select><input placeholder="Search hall ticket" disabled></div>
-          <div class="table-wrap"><table><thead><tr><th>Hall Ticket</th><th>Student Name</th><th>Class</th><th>Attempted</th><th>Correct</th><th>Marks Obtained</th><th>Percentage</th><th>Status</th></tr></thead><tbody><tr><td colspan="8" class="empty">Results will appear here after connection.</td></tr></tbody></table></div>
-        </div>
-      </section>
-
-      <!-- VERIFICATION -->
-      <section class="page" id="page-verification">
-        <div class="page-heading"><div><h1>Verification Logs</h1><p>Review student identity verification records.</p></div></div>
-        <div class="notice">Selfie verification records and consent status will be available here. Access to verification images must be restricted and retention managed appropriately.</div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Verification ID</th><th>Exam ID</th><th>Hall Ticket</th><th>Consent</th><th>Verified At</th><th>Status</th></tr></thead><tbody><tr><td colspan="6" class="empty">Verification records will appear here after connection.</td></tr></tbody></table></div></div>
-      </section>
-
-      <!-- SETTINGS -->
-      <section class="page" id="page-settings">
-        <div class="page-heading"><div><h1>System Settings</h1><p>Manage examination and portal settings.</p></div></div>
-        <div class="panel">
-          <h3>Student Examination Access</h3>
-          <div class="field"><label>Common Student Password</label><input type="password" placeholder="Managed securely by backend" disabled></div>
-          <p>The common password will be changed through a secure administrator action. It will not be stored in this webpage.</p>
-        </div>
-        <div class="panel">
-          <h3>School Information</h3>
-          <div class="field"><label>School Name</label><input value="Raagasree E.M High School" disabled></div>
-          <div class="field"><label>Location</label><input value="V. Kota" disabled></div>
-          <div class="field"><label>Academic Year</label><input value="2026–27" disabled></div>
-        </div>
-      </section>
-
-      <div class="footer">RAAGASREE E.M HIGH SCHOOL · V. KOTA<br>Excellence in Every Step</div>
-    </div>
-  </main>
-</div>
-
 <script>
+/****************************************************
+ * RAAGASREE ONLINE ASSESSMENT
+ * ADMIN LOGIN CONNECTION
+ ****************************************************/
+
+const ASSESSMENT_API_URL =
+  "https://script.google.com/macros/s/AKfycbyzutEAMnW_97VZpPvGqKGiZa3psQHwUE_AB3Yxvby1f0l6APEE7gWnGMt20wGkHIGs/exec";
+
 const pageTitles = {
-  dashboard:"Dashboard",
-  students:"Student Management",
-  subjects:"Subject Management",
-  questions:"Question Bank",
-  exams:"Exam Management",
-  results:"Examination Results",
-  verification:"Verification Logs",
-  settings:"System Settings"
+  dashboard: "Dashboard",
+  students: "Student Management",
+  subjects: "Subject Management",
+  questions: "Question Bank",
+  exams: "Exam Management",
+  results: "Examination Results",
+  verification: "Verification Logs",
+  settings: "System Settings"
 };
 
-function adminLogin(){
-  const pin=document.getElementById("adminPin").value.trim();
-  const message=document.getElementById("loginMessage");
 
-  if(!pin){
-    message.textContent="Please enter your administrator PIN.";
+/****************************************************
+ * ADMIN LOGIN
+ ****************************************************/
+
+async function adminLogin() {
+  const pin = document.getElementById("adminPin").value.trim();
+  const message = document.getElementById("loginMessage");
+  const button = document.querySelector(".login-card .primary-btn");
+
+  if (!/^\d{6}$/.test(pin)) {
+    message.textContent = "Please enter your complete 6-digit PIN.";
     return;
   }
 
-  message.textContent="Secure login service is not connected yet. Please complete backend setup.";
+  message.style.color = "#7c8798";
+  message.textContent = "Verifying administrator PIN...";
+
+  button.disabled = true;
+  button.textContent = "Please wait...";
+
+  try {
+    const response = await fetch(ASSESSMENT_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify({
+        action: "adminLogin",
+        pin: pin
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("Server returned an error.");
+    }
+
+    const result = await response.json();
+
+    if (result.success && result.token) {
+      sessionStorage.setItem(
+        "RAAGASREE_ADMIN_TOKEN",
+        result.token
+      );
+
+      message.textContent = "";
+
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("adminApp").style.display = "block";
+
+      document.getElementById("connectionStatus").textContent =
+        "Connected";
+
+      showPage("dashboard");
+
+    } else {
+      message.style.color = "#d9534f";
+      message.textContent =
+        result.message || "Administrator login failed.";
+    }
+
+  } catch (error) {
+    console.error("Admin login error:", error);
+
+    message.style.color = "#d9534f";
+    message.textContent =
+      "Unable to connect to the backend. Please check the deployment and try again.";
+
+  } finally {
+    button.disabled = false;
+    button.textContent = "Continue to Dashboard";
+  }
 }
 
-function logout(){
-  document.getElementById("adminApp").style.display="none";
-  document.getElementById("loginScreen").style.display="flex";
-  document.getElementById("adminPin").value="";
-  document.getElementById("loginMessage").textContent="";
+
+/****************************************************
+ * LOGOUT
+ ****************************************************/
+
+function logout() {
+  sessionStorage.removeItem("RAAGASREE_ADMIN_TOKEN");
+
+  document.getElementById("adminApp").style.display = "none";
+  document.getElementById("loginScreen").style.display = "flex";
+  document.getElementById("adminPin").value = "";
+  document.getElementById("loginMessage").textContent = "";
 }
 
-function showPage(name){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.querySelectorAll(".nav-btn[data-page]").forEach(b=>b.classList.remove("active"));
 
-  const page=document.getElementById("page-"+name);
-  if(page)page.classList.add("active");
+/****************************************************
+ * PAGE NAVIGATION
+ ****************************************************/
 
-  const nav=document.querySelector('.nav-btn[data-page="'+name+'"]');
-  if(nav)nav.classList.add("active");
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
 
-  document.getElementById("topTitle").textContent=pageTitles[name]||"Dashboard";
+  document.querySelectorAll(".nav-btn[data-page]").forEach(button => {
+    button.classList.remove("active");
+  });
+
+  const page = document.getElementById("page-" + name);
+
+  if (page) {
+    page.classList.add("active");
+  }
+
+  const nav = document.querySelector(
+    '.nav-btn[data-page="' + name + '"]'
+  );
+
+  if (nav) {
+    nav.classList.add("active");
+  }
+
+  document.getElementById("topTitle").textContent =
+    pageTitles[name] || "Dashboard";
+
   document.getElementById("sidebar").classList.remove("open");
 }
 
-document.querySelectorAll(".nav-btn[data-page]").forEach(button=>{
-  button.addEventListener("click",()=>showPage(button.dataset.page));
+
+/****************************************************
+ * NAVIGATION BUTTONS
+ ****************************************************/
+
+document.querySelectorAll(".nav-btn[data-page]").forEach(button => {
+  button.addEventListener("click", () => {
+    showPage(button.dataset.page);
+  });
 });
 
-function toggleSidebar(){
+
+/****************************************************
+ * MOBILE SIDEBAR
+ ****************************************************/
+
+function toggleSidebar() {
   document.getElementById("sidebar").classList.toggle("open");
 }
 
-function showForm(id){
-  document.getElementById(id).style.display="block";
-  document.getElementById(id).scrollIntoView({behavior:"smooth",block:"start"});
+
+/****************************************************
+ * FORM DISPLAY
+ ****************************************************/
+
+function showForm(id) {
+  document.getElementById(id).style.display = "block";
+
+  document.getElementById(id).scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 }
 
-function hideForm(id){
-  document.getElementById(id).style.display="none";
+function hideForm(id) {
+  document.getElementById(id).style.display = "none";
 }
 
-function notConnected(){
-  alert("The secure database connection is not ready yet. This feature will work after backend integration.");
+
+/****************************************************
+ * DATABASE PLACEHOLDER
+ ****************************************************/
+
+function notConnected() {
+  alert(
+    "This feature is not connected yet. " +
+    "The backend functions will be added next."
+  );
 }
+
+
+/****************************************************
+ * ENTER KEY LOGIN
+ ****************************************************/
+
+document.getElementById("adminPin").addEventListener("keydown", event => {
+  if (event.key === "Enter") {
+    adminLogin();
+  }
+});
+
 </script>
-
-</body>
-</html>
-
