@@ -200,7 +200,7 @@ th{color:#69778b;font-size:10px;text-transform:uppercase;letter-spacing:.6px;bac
 
 <div class="panel">
 <h3>Bulk Paste Questions</h3>
-<p>Copy your questions from WhatsApp and paste them below. Each question should have four options and a correct answer.</p>
+<p>Copy your questions from WhatsApp and paste them below. Each question should have four options and a correct answer. You can also put the answer key at the bottom under ANSWERS.</p>
 <div class="form-grid">
 <div class="field"><label>Class for all pasted questions</label><select id="bulkClass" class="class-options" onchange="updateBulkSubjects()"></select></div>
 <div class="field"><label>Subject for all pasted questions</label><select id="bulkSubject"><option value="">Select subject</option></select></div>
@@ -329,7 +329,6 @@ function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;",
 function statusBadge(s){const active=String(s).toLowerCase()==="active";return '<span class="status '+(active?"":"inactive")+'">'+esc(s||"Unknown")+'</span>';}
 function notice(id,msg,type){const el=document.getElementById(id);if(!el)return;el.className="notice"+(type?" "+type:"");el.textContent=msg;}
 function token(){return sessionStorage.getItem(TOKEN_KEY)||"";}
-function showLogin(){document.getElementById("adminApp").style.display="none";document.getElementById("loginScreen").style.display="flex";}
 function closeForm(id){document.getElementById(id).hidden=true;}
 function openForm(id){document.getElementById(id).hidden=false;document.getElementById(id).scrollIntoView({behavior:"smooth",block:"start"});}
 function fillClassSelects(){
@@ -358,6 +357,7 @@ function logout(){
  sessionStorage.removeItem(TOKEN_KEY);allStudents=[];subjects=[];questions=[];exams=[];
  document.getElementById("adminPin").value="";document.getElementById("loginMessage").textContent="";showLogin();
 }
+function showLogin(){document.getElementById("adminApp").style.display="none";document.getElementById("loginScreen").style.display="flex";}
 async function loadAdminData(){
  if(!token()){showLogin();return;}
  notice("dashboardNotice","Loading live information from the assessment database...");
@@ -505,90 +505,209 @@ document.getElementById("questionsBody").addEventListener("click",async e=>{
  }
 });
 
-/* WHATSAPP BULK QUESTION PARSER */
+/* FIXED WHATSAPP / HINDI BULK QUESTION PARSER */
 function parseBulkQuestions(raw){
- const lines=raw.replace(/\r/g,"").split("\n");
- const blocks=[];let current=null;
- const startPattern=/^\s*(?:(?:Q(?:uestion)?\s*)?\d{1,3}\s*[\.\):\-]|Q(?:uestion)?\s*\d+\s*[:\-])/i;
- function start(){current={question:"",A:"",B:"",C:"",D:"",answer:"",errors:[]};blocks.push(current);}
- lines.forEach(original=>{
-  const line=original.trim();
-  if(!line)return;
+ raw=String(raw||"").replace(/[\u200B-\u200D\uFEFF]/g,"").replace(/\r/g,"");
+ const lines=raw.split("\n");
+ const blocks=[];
+ const answerKey={};
+ let current=null;
+ let readingAnswers=false;
+
+ const startPattern=/^(?:(?:Q(?:uestion)?\s*)?\d{1,3}\s*[\.\):\-]|Q(?:uestion)?\s*\d+\s*[:\-])\s*/i;
+
+ function startQuestion(){
+  current={question:"",A:"",B:"",C:"",D:"",answer:"",errors:[]};
+  blocks.push(current);
+ }
+
+ for(let original of lines){
+  let line=original.trim();
+  if(!line)continue;
+
+  if(/^(?:ANSWER\s*KEY|ANSWERS?)\s*:?\s*$/i.test(line)){
+   readingAnswers=true;
+   current=null;
+   continue;
+  }
+
+  if(readingAnswers){
+   let answerMatch=line.match(/^(\d{1,3})\s*[\.\):\-]?\s*[-:]?\s*([A-D])\s*$/i);
+   if(answerMatch){
+    answerKey[Number(answerMatch[1])]=answerMatch[2].toUpperCase();
+   }
+   continue;
+  }
+
   if(startPattern.test(line)){
-   start();
+   startQuestion();
    line=line.replace(startPattern,"").trim();
   }
-  if(!current)start();
-  let m;
-  if((m=line.match(/^(?:Option\s*)?A\s*[\)\].:\-]\s*(.*)$/i))){current.A=m[1].trim();return;}
-  if((m=line.match(/^(?:Option\s*)?B\s*[\)\].:\-]\s*(.*)$/i))){current.B=m[1].trim();return;}
-  if((m=line.match(/^(?:Option\s*)?C\s*[\)\].:\-]\s*(.*)$/i))){current.C=m[1].trim();return;}
-  if((m=line.match(/^(?:Option\s*)?D\s*[\)\].:\-]\s*(.*)$/i))){current.D=m[1].trim();return;}
-  if((m=line.match(/^(?:correct\s*answer|answer|ans|key)\s*[:=\-]?\s*([A-D])(?:\b.*)?$/i))){current.answer=m[1].toUpperCase();return;}
-  if((m=line.match(/^(?:correct\s*answer|answer|ans|key)\s*[:=\-]?\s*([A-D])\s*[\)\].:\-]/i))){current.answer=m[1].toUpperCase();return;}
-  if(!current.A&&!current.B&&!current.C&&!current.D&&!current.answer){
+
+  if(!current)startQuestion();
+
+  let match;
+
+  match=line.match(/^(?:Option\s*)?A\s*[\)\].:\-]\s*(.*)$/i);
+  if(match){current.A=match[1].trim();continue;}
+
+  match=line.match(/^(?:Option\s*)?B\s*[\)\].:\-]\s*(.*)$/i);
+  if(match){current.B=match[1].trim();continue;}
+
+  match=line.match(/^(?:Option\s*)?C\s*[\)\].:\-]\s*(.*)$/i);
+  if(match){current.C=match[1].trim();continue;}
+
+  match=line.match(/^(?:Option\s*)?D\s*[\)\].:\-]\s*(.*)$/i);
+  if(match){current.D=match[1].trim();continue;}
+
+  match=line.match(/^(?:Correct\s*Answer|Answer|Ans|Key|उत्तर|उतर)\s*[:：=\-]?\s*([A-D])(?:\s*[\)\].:\-].*)?$/i);
+  if(match){current.answer=match[1].toUpperCase();continue;}
+
+  if(/^(?:उत्तर|उतर)\s*[:：]?\s*$/i.test(line))continue;
+
+  if(!current.A&&!current.B&&!current.C&&!current.D){
    current.question+=(current.question?" ":"")+line;
-  }else if(!current.answer&&/^(?:correct|answer|ans)\b/i.test(line)){
-   current.errors.push("Answer format not recognised: "+line);
   }
- });
+ }
+
  return blocks.filter(q=>q.question||q.A||q.B||q.C||q.D||q.answer).map((q,i)=>{
+  if(!q.answer)q.answer=answerKey[i+1]||"";
+
   if(!q.question)q.errors.push("Question text is missing.");
-  ["A","B","C","D"].forEach(k=>{if(!q[k])q.errors.push("Option "+k+" is missing.");});
+  ["A","B","C","D"].forEach(k=>{
+   if(!q[k])q.errors.push("Option "+k+" is missing.");
+  });
   if(!q.answer)q.errors.push("Correct answer is missing.");
-  return {...q,number:i+1,valid:q.errors.length===0};
+
+  q.number=i+1;
+  q.valid=q.errors.length===0;
+  return q;
  });
 }
+
 function previewBulkQuestions(){
  const raw=document.getElementById("bulkText").value.trim();
- const cl=document.getElementById("bulkClass").value,sub=document.getElementById("bulkSubject").value;
+ const cl=document.getElementById("bulkClass").value;
+ const sub=document.getElementById("bulkSubject").value;
  const marks=Number(document.getElementById("bulkMarks").value);
+
  if(!raw){notice("questionNotice","Paste your WhatsApp questions first.","error");return;}
  if(!cl||!sub){notice("questionNotice","Select the class and subject for this batch.","error");return;}
  if(!Number.isFinite(marks)||marks<=0){notice("questionNotice","Enter valid marks per question.","error");return;}
- parsedBulkQuestions=parseBulkQuestions(raw);
- if(!parsedBulkQuestions.length){notice("questionNotice","No questions were recognised. Check the format and try again.","error");return;}
- const valid=parsedBulkQuestions.filter(q=>q.valid).length;
- const invalid=parsedBulkQuestions.length-valid;
- document.getElementById("bulkSummary").textContent=parsedBulkQuestions.length+" questions detected · "+valid+" ready to save · "+invalid+" need correction. Class: "+cl+" · Subject: "+subjectName(sub);
- document.getElementById("bulkPreviewList").innerHTML=parsedBulkQuestions.map(q=>{
-  const errs=q.errors.length?'<div class="preview-error">'+q.errors.map(esc).join("<br>")+'</div>':'';
-  return '<div class="preview-card '+(q.valid?"":"invalid")+'"><strong>Question '+q.number+'</strong><div style="margin-top:8px;font-size:13px">'+esc(q.question)+'</div><div class="option-line">A. '+esc(q.A)+'</div><div class="option-line">B. '+esc(q.B)+'</div><div class="option-line">C. '+esc(q.C)+'</div><div class="option-line">D. '+esc(q.D)+'</div>'+(q.valid?'<div class="preview-answer">Correct answer: '+esc(q.answer)+' · '+marks+' mark(s)</div>':errs)+'</div>';
- }).join("");
- document.getElementById("bulkPreviewArea").hidden=false;
- document.getElementById("bulkProgressBar").style.width="0%";
- document.getElementById("bulkSaveStatus").textContent="";
- document.getElementById("saveBulkButton").disabled=valid===0;
- notice("questionNotice","Preview generated. Review every question before saving.","success");
+
+ try{
+  parsedBulkQuestions=parseBulkQuestions(raw);
+
+  if(!parsedBulkQuestions.length){
+   document.getElementById("bulkPreviewArea").hidden=true;
+   notice("questionNotice","No questions were recognised. Check the question numbering and format.","error");
+   return;
+  }
+
+  const valid=parsedBulkQuestions.filter(q=>q.valid).length;
+  const invalid=parsedBulkQuestions.length-valid;
+
+  document.getElementById("bulkSummary").textContent=
+   parsedBulkQuestions.length+" questions detected · "+valid+
+   " ready to save · "+invalid+" need correction. Class: "+cl+
+   " · Subject: "+subjectName(sub);
+
+  document.getElementById("bulkPreviewList").innerHTML=parsedBulkQuestions.map(q=>{
+   const errs=q.errors.length?
+    '<div class="preview-error">'+q.errors.map(esc).join("<br>")+'</div>':'';
+
+   return '<div class="preview-card '+(q.valid?"":"invalid")+'">'+
+    '<strong>Question '+q.number+'</strong>'+
+    '<div style="margin-top:8px;font-size:13px">'+esc(q.question)+'</div>'+
+    '<div class="option-line">A. '+esc(q.A)+'</div>'+
+    '<div class="option-line">B. '+esc(q.B)+'</div>'+
+    '<div class="option-line">C. '+esc(q.C)+'</div>'+
+    '<div class="option-line">D. '+esc(q.D)+'</div>'+
+    (q.valid?
+     '<div class="preview-answer">Correct answer: '+esc(q.answer)+' · '+marks+' mark(s)</div>':
+     errs)+
+    '</div>';
+  }).join("");
+
+  document.getElementById("bulkPreviewArea").hidden=false;
+  document.getElementById("bulkProgressBar").style.width="0%";
+  document.getElementById("bulkSaveStatus").textContent="";
+  document.getElementById("saveBulkButton").disabled=valid===0;
+
+  notice("questionNotice","Preview generated. Review every question before saving.","success");
+
+ }catch(error){
+  console.error("Bulk preview error:",error);
+  document.getElementById("bulkPreviewArea").hidden=true;
+  notice("questionNotice","Preview error: "+error.message,"error");
+ }
 }
+
 async function saveBulkQuestions(){
  const valid=parsedBulkQuestions.filter(q=>q.valid);
  if(!valid.length){notice("questionNotice","There are no valid questions to save.","error");return;}
- const cl=document.getElementById("bulkClass").value,sub=document.getElementById("bulkSubject").value,marks=document.getElementById("bulkMarks").value;
+
+ const cl=document.getElementById("bulkClass").value;
+ const sub=document.getElementById("bulkSubject").value;
+ const marks=document.getElementById("bulkMarks").value;
  const btn=document.getElementById("saveBulkButton");
+
  if(!confirm("Save "+valid.length+" questions to the QuestionBank for "+cl+" – "+subjectName(sub)+"?"))return;
- btn.disabled=true;btn.textContent="Saving questions...";
+
+ btn.disabled=true;
+ btn.textContent="Saving questions...";
+
  let saved=0,failed=[];
+
  for(let i=0;i<valid.length;i++){
   const q=valid[i];
-  const question={Class:cl,"Subject ID":sub,Question:q.question,"Option A":q.A,"Option B":q.B,"Option C":q.C,"Option D":q.D,"Correct Answer":q.answer,Marks:marks,Status:"Active"};
-  try{await api({action:"saveQuestion",question});saved++;}
-  catch(err){failed.push("Question "+q.number+": "+err.message);}
-  document.getElementById("bulkProgressBar").style.width=Math.round(((i+1)/valid.length)*100)+"%";
-  document.getElementById("bulkSaveStatus").textContent="Processed "+(i+1)+" of "+valid.length+" · Saved "+saved;
+
+  const question={
+   Class:cl,
+   "Subject ID":sub,
+   Question:q.question,
+   "Option A":q.A,
+   "Option B":q.B,
+   "Option C":q.C,
+   "Option D":q.D,
+   "Correct Answer":q.answer,
+   Marks:marks,
+   Status:"Active"
+  };
+
+  try{
+   await api({action:"saveQuestion",question});
+   saved++;
+  }catch(err){
+   failed.push("Question "+q.number+": "+err.message);
+  }
+
+  document.getElementById("bulkProgressBar").style.width=
+   Math.round(((i+1)/valid.length)*100)+"%";
+
+  document.getElementById("bulkSaveStatus").textContent=
+   "Processed "+(i+1)+" of "+valid.length+" · Saved "+saved;
  }
- btn.disabled=false;btn.textContent="Save Valid Questions to Database";
- await loadQuestions();await loadAdminData();
+
+ btn.disabled=false;
+ btn.textContent="Save Valid Questions to Database";
+
+ await loadQuestions();
+ await loadAdminData();
+
  if(failed.length){
   notice("questionNotice",saved+" questions saved. "+failed.length+" failed. See details below.","error");
-  document.getElementById("bulkSaveStatus").textContent="Saved: "+saved+". Failed: "+failed.join(" | ");
+  document.getElementById("bulkSaveStatus").textContent=
+   "Saved: "+saved+". Failed: "+failed.join(" | ");
  }else{
   notice("questionNotice","Successfully saved all "+saved+" questions to your QuestionBank.","success");
-  document.getElementById("bulkSaveStatus").textContent="All "+saved+" questions saved successfully.";
+  document.getElementById("bulkSaveStatus").textContent=
+   "All "+saved+" questions saved successfully.";
   document.getElementById("bulkText").value="";
   parsedBulkQuestions=[];
  }
 }
+
 function clearBulk(){
  document.getElementById("bulkText").value="";
  document.getElementById("bulkPreviewArea").hidden=true;
