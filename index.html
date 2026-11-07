@@ -94,6 +94,24 @@ header {
   letter-spacing:.6px;
 }
 
+.admin-link {
+  padding:9px 15px;
+  border:1px solid var(--gold);
+  border-radius:7px;
+  color:var(--navy);
+  text-decoration:none;
+  font-size:12px;
+  font-weight:800;
+  white-space:nowrap;
+  transition:.2s;
+}
+
+.admin-link:hover {
+  background:var(--navy);
+  color:var(--gold-light);
+  border-color:var(--navy);
+}
+
 main {
   max-width:1250px;
   margin:38px auto;
@@ -377,9 +395,23 @@ footer strong {
   color:var(--navy);
 }
 
+@media(max-width:900px) {
+  .header-tagline {
+    display:none;
+  }
+
+  .admin-link {
+    margin-left:auto;
+  }
+}
+
 @media(max-width:760px) {
   header {
     padding:13px 18px;
+  }
+
+  .header-inner {
+    gap:10px;
   }
 
   .logo {
@@ -396,8 +428,10 @@ footer strong {
     font-size:10px;
   }
 
-  .header-tagline {
-    display:none;
+  .admin-link {
+    margin-left:auto;
+    padding:7px 9px;
+    font-size:10px;
   }
 
   main {
@@ -441,9 +475,23 @@ footer strong {
   }
 }
 
-@media(max-width:360px) {
+@media(max-width:380px) {
+  .header-inner {
+    gap:7px;
+  }
+
   .school-name {
-    font-size:13px;
+    font-size:12px;
+  }
+
+  .school-location {
+    font-size:9px;
+    letter-spacing:1px;
+  }
+
+  .admin-link {
+    padding:7px 6px;
+    font-size:9px;
   }
 
   .hero h1 {
@@ -469,6 +517,10 @@ footer strong {
     <div class="header-tagline">
       EXCELLENCE IN EVERY STEP
     </div>
+
+    <a href="admin.html" class="admin-link">
+      Admin Login →
+    </a>
   </div>
 </header>
 
@@ -649,4 +701,3 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
 
 </body>
 </html>
-
