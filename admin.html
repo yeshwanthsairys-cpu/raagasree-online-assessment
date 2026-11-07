@@ -205,8 +205,8 @@ button{cursor:pointer}
 .page-heading p{margin:0;color:var(--muted);font-size:12px}
 .cards{
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:16px;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:14px;
   margin-bottom:24px;
 }
 .stat-card,.panel{
@@ -286,6 +286,10 @@ th{
   font-size:10px;
   font-weight:700;
 }
+.status.inactive{
+  background:#fff0ef;
+  color:var(--red);
+}
 .notice{
   background:#fff8e9;
   border:1px solid #efdfb8;
@@ -295,6 +299,16 @@ th{
   font-size:12px;
   line-height:1.6;
   margin-bottom:18px;
+}
+.notice.error{
+  background:#fff0ef;
+  border-color:#f1cccc;
+  color:#a33b37;
+}
+.notice.success{
+  background:#edf6f0;
+  border-color:#cce6d5;
+  color:#216b49;
 }
 .form-grid{
   display:grid;
@@ -329,7 +343,20 @@ th{
   font-size:10px;
   text-align:center;
 }
-@media(max-width:1050px){
+.refresh-btn{
+  background:#fff;
+  border:1px solid var(--border);
+  color:var(--navy);
+  border-radius:8px;
+  padding:10px 14px;
+  font-weight:700;
+}
+.refresh-btn:hover{border-color:var(--gold)}
+.loading{opacity:.6}
+@media(max-width:1200px){
+  .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:900px){
   .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:700px){
@@ -346,12 +373,14 @@ th{
   .form-grid{grid-template-columns:1fr}
   .page-heading h1{font-size:22px}
 }
+@media(max-width:380px){
+  .cards{grid-template-columns:1fr}
+}
 </style>
 </head>
 
 <body>
 
-<!-- ADMIN LOGIN -->
 <section class="login-screen" id="loginScreen">
   <div class="login-card">
     <div class="logo">R</div>
@@ -376,7 +405,6 @@ th{
   </div>
 </section>
 
-<!-- ADMIN APPLICATION -->
 <div class="app" id="adminApp">
 
   <aside class="sidebar" id="sidebar">
@@ -426,26 +454,46 @@ th{
             <h1>Dashboard Overview</h1>
             <p>Manage your school's online examinations.</p>
           </div>
-          <span class="status">Academic Year 2026–27</span>
+          <button class="refresh-btn" onclick="loadAdminData()">↻ Refresh Data</button>
         </div>
 
-        <div class="notice">
-          Welcome to the Raagasree Online Assessment Administration Panel.
-          Your dashboard will display live database information after backend integration.
+        <div class="notice" id="dashboardNotice">
+          Connecting to the assessment database...
         </div>
 
         <div class="cards">
-          <div class="stat-card"><small>Total Students</small><strong id="totalStudents">—</strong><span>Registered students</span></div>
-          <div class="stat-card"><small>Total Subjects</small><strong id="totalSubjects">—</strong><span>Configured subjects</span></div>
-          <div class="stat-card"><small>Question Bank</small><strong id="totalQuestions">—</strong><span>Available questions</span></div>
-          <div class="stat-card"><small>Total Examinations</small><strong id="totalExams">—</strong><span>Created examinations</span></div>
+          <div class="stat-card">
+            <small>Total Students</small>
+            <strong id="totalStudents">—</strong>
+            <span>Registered students</span>
+          </div>
+          <div class="stat-card">
+            <small>Active Students</small>
+            <strong id="activeStudents">—</strong>
+            <span>Currently active</span>
+          </div>
+          <div class="stat-card">
+            <small>Total Subjects</small>
+            <strong id="totalSubjects">—</strong>
+            <span>Configured subjects</span>
+          </div>
+          <div class="stat-card">
+            <small>Question Bank</small>
+            <strong id="totalQuestions">—</strong>
+            <span>Available questions</span>
+          </div>
+          <div class="stat-card">
+            <small>Total Examinations</small>
+            <strong id="totalExams">—</strong>
+            <span>Created examinations</span>
+          </div>
         </div>
 
         <div class="panel">
           <h3>Quick Actions</h3>
           <p>Choose a section to manage your assessment system.</p>
           <div class="quick-grid">
-            <button class="quick-btn" onclick="showPage('students')">＋ Add Students<span>Manage student records</span></button>
+            <button class="quick-btn" onclick="showPage('students')">＋ View Students<span>Manage student records</span></button>
             <button class="quick-btn" onclick="showPage('questions')">＋ Add Questions<span>Build your question bank</span></button>
             <button class="quick-btn" onclick="showPage('exams')">＋ Create Examination<span>Configure a new examination</span></button>
           </div>
@@ -459,7 +507,8 @@ th{
                 <tr><td>School</td><td>Raagasree E.M High School</td></tr>
                 <tr><td>Location</td><td>V. Kota</td></tr>
                 <tr><td>Academic Year</td><td>2026–27</td></tr>
-                <tr><td>Backend Connection</td><td id="connectionStatus">Not connected yet</td></tr>
+                <tr><td>Backend Connection</td><td id="connectionStatus">Checking...</td></tr>
+                <tr><td>Last Updated</td><td id="lastUpdated">—</td></tr>
               </tbody>
             </table>
           </div>
@@ -469,30 +518,44 @@ th{
       <!-- STUDENTS -->
       <section class="page" id="page-students">
         <div class="page-heading">
-          <div><h1>Student Management</h1><p>Add and manage student records.</p></div>
-          <button class="primary-btn" onclick="showForm('studentForm')">＋ Add Student</button>
-        </div>
-        <div class="notice">Student records will be loaded from the Students sheet after backend connection.</div>
-        <div class="panel" id="studentForm" style="display:none">
-          <h3>Student Details</h3>
-          <div class="form-grid">
-            <div class="field"><label>Hall Ticket Number</label><input placeholder="Enter hall ticket number"></div>
-            <div class="field"><label>Student Name</label><input placeholder="Enter student name"></div>
-            <div class="field"><label>Father Name</label><input placeholder="Enter father name"></div>
-            <div class="field"><label>Date of Birth</label><input type="date"></div>
-            <div class="field"><label>Class</label><select><option value="">Select class</option><option>LKG</option><option>UKG</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
-            <div class="field"><label>Section</label><input placeholder="A / B"></div>
-            <div class="field"><label>Academic Year</label><input value="2026-27"></div>
-            <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option></select></div>
+          <div>
+            <h1>Student Management</h1>
+            <p>View registered student records from your database.</p>
           </div>
-          <div class="form-actions">
-            <button class="primary-btn" onclick="notConnected()">Save Student</button>
-            <button class="secondary-btn" onclick="hideForm('studentForm')">Cancel</button>
-          </div>
+          <button class="refresh-btn" onclick="loadAdminData()">↻ Refresh Students</button>
         </div>
+
+        <div class="notice" id="studentNotice">
+          Student records are loaded from the Assessment Database.
+        </div>
+
         <div class="panel">
-          <div class="toolbar"><input placeholder="Search by name or hall ticket" disabled><select disabled><option>All Classes</option></select></div>
-          <div class="table-wrap"><table><thead><tr><th>Hall Ticket</th><th>Student Name</th><th>Class</th><th>Section</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="6" class="empty">Student data will appear here after connection.</td></tr></tbody></table></div>
+          <div class="toolbar">
+            <input id="studentSearch" placeholder="Search name or hall ticket" oninput="renderStudents()">
+            <select id="classFilter" onchange="renderStudents()">
+              <option value="">All Classes</option>
+            </select>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Hall Ticket</th>
+                  <th>Student Name</th>
+                  <th>Father Name</th>
+                  <th>Class</th>
+                  <th>Section</th>
+                  <th>Academic Year</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTableBody">
+                <tr><td colspan="7" class="empty">Loading student records...</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p id="studentCount" style="margin-top:14px">Showing 0 students</p>
         </div>
       </section>
 
@@ -500,102 +563,50 @@ th{
       <section class="page" id="page-subjects">
         <div class="page-heading">
           <div><h1>Subject Management</h1><p>Configure subjects for each class.</p></div>
-          <button class="primary-btn" onclick="showForm('subjectForm')">＋ Add Subject</button>
         </div>
-        <div class="panel" id="subjectForm" style="display:none">
-          <h3>New Subject</h3>
-          <div class="form-grid">
-            <div class="field"><label>Subject ID</label><input placeholder="Example: ENG01"></div>
-            <div class="field"><label>Subject Name</label><input placeholder="Enter subject name"></div>
-            <div class="field"><label>Class</label><select><option>Select class</option><option>LKG</option><option>UKG</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
-            <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option></select></div>
-          </div>
-          <div class="form-actions"><button class="primary-btn" onclick="notConnected()">Save Subject</button><button class="secondary-btn" onclick="hideForm('subjectForm')">Cancel</button></div>
-        </div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Subject ID</th><th>Subject Name</th><th>Class</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="5" class="empty">Subject data will appear here after connection.</td></tr></tbody></table></div></div>
+        <div class="notice">Subject creation and editing will be connected in the next backend update.</div>
       </section>
 
       <!-- QUESTION BANK -->
       <section class="page" id="page-questions">
         <div class="page-heading">
           <div><h1>Question Bank</h1><p>Create and maintain multiple-choice questions.</p></div>
-          <button class="primary-btn" onclick="showForm('questionForm')">＋ Add Question</button>
         </div>
-        <div class="notice">Each question supports four options, one correct answer and configurable marks.</div>
-        <div class="panel" id="questionForm" style="display:none">
-          <h3>Question Details</h3>
-          <div class="form-grid">
-            <div class="field"><label>Question ID</label><input placeholder="Unique question ID"></div>
-            <div class="field"><label>Class</label><select><option>Select class</option><option>LKG</option><option>UKG</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
-            <div class="field"><label>Subject ID</label><input placeholder="Subject ID"></div>
-            <div class="field"><label>Marks</label><input type="number" min="1" value="1"></div>
-          </div>
-          <div class="field"><label>Question</label><textarea rows="3" placeholder="Enter your question"></textarea></div>
-          <div class="form-grid">
-            <div class="field"><label>Option A</label><input placeholder="Option A"></div>
-            <div class="field"><label>Option B</label><input placeholder="Option B"></div>
-            <div class="field"><label>Option C</label><input placeholder="Option C"></div>
-            <div class="field"><label>Option D</label><input placeholder="Option D"></div>
-            <div class="field"><label>Correct Answer</label><select><option>Select answer</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
-            <div class="field"><label>Status</label><select><option>Active</option><option>Inactive</option></select></div>
-          </div>
-          <div class="form-actions"><button class="primary-btn" onclick="notConnected()">Save Question</button><button class="secondary-btn" onclick="hideForm('questionForm')">Cancel</button></div>
-        </div>
-        <div class="panel">
-          <div class="toolbar"><input placeholder="Search questions" disabled><select disabled><option>All Classes</option></select><select disabled><option>All Subjects</option></select></div>
-          <div class="table-wrap"><table><thead><tr><th>Question ID</th><th>Class</th><th>Subject</th><th>Question</th><th>Marks</th><th>Status</th></tr></thead><tbody><tr><td colspan="6" class="empty">Question bank will appear here after connection.</td></tr></tbody></table></div>
-        </div>
+        <div class="notice">Question creation and editing will be connected in the next backend update.</div>
       </section>
 
       <!-- EXAMS -->
       <section class="page" id="page-exams">
         <div class="page-heading">
           <div><h1>Exam Management</h1><p>Create, configure and control examinations.</p></div>
-          <button class="primary-btn" onclick="showForm('examForm')">＋ Create Exam</button>
         </div>
-        <div class="panel" id="examForm" style="display:none">
-          <h3>Examination Configuration</h3>
-          <div class="form-grid">
-            <div class="field"><label>Exam ID</label><input placeholder="Example: SA1-2026"></div>
-            <div class="field"><label>Exam Name</label><input placeholder="Example: SA1 Examination"></div>
-            <div class="field"><label>Class</label><select><option>Select class</option><option>LKG</option><option>UKG</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></div>
-            <div class="field"><label>Academic Year</label><input value="2026-27"></div>
-            <div class="field"><label>Duration (Minutes)</label><input type="number" placeholder="60"></div>
-            <div class="field"><label>Total Marks</label><input type="number" placeholder="60"></div>
-            <div class="field"><label>Questions Per Subject</label><input type="number" placeholder="10"></div>
-            <div class="field"><label>Status</label><select><option>Draft</option><option>Active</option><option>Inactive</option></select></div>
-            <div class="field"><label>Start Date</label><input type="date"></div>
-            <div class="field"><label>End Date</label><input type="date"></div>
-          </div>
-          <div class="form-actions"><button class="primary-btn" onclick="notConnected()">Save Examination</button><button class="secondary-btn" onclick="hideForm('examForm')">Cancel</button></div>
-        </div>
-        <div class="panel"><h3>Configured Examinations</h3><div class="table-wrap"><table><thead><tr><th>Exam ID</th><th>Exam Name</th><th>Class</th><th>Duration</th><th>Total Marks</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td colspan="7" class="empty">Examination data will appear here after connection.</td></tr></tbody></table></div></div>
+        <div class="notice">Examination creation and editing will be connected in the next backend update.</div>
       </section>
 
       <!-- RESULTS -->
       <section class="page" id="page-results">
-        <div class="page-heading"><div><h1>Examination Results</h1><p>View student performance and examination reports.</p></div></div>
-        <div class="notice">Results will be calculated and displayed after student submissions are connected to the backend.</div>
-        <div class="panel">
-          <div class="toolbar"><select disabled><option>Select Examination</option></select><select disabled><option>Select Class</option></select><input placeholder="Search hall ticket" disabled></div>
-          <div class="table-wrap"><table><thead><tr><th>Hall Ticket</th><th>Student Name</th><th>Class</th><th>Attempted</th><th>Correct</th><th>Marks Obtained</th><th>Percentage</th><th>Status</th></tr></thead><tbody><tr><td colspan="8" class="empty">Results will appear here after connection.</td></tr></tbody></table></div>
+        <div class="page-heading">
+          <div><h1>Examination Results</h1><p>View student performance and examination reports.</p></div>
         </div>
+        <div class="notice">Results will be displayed after the examination submission system is connected.</div>
       </section>
 
       <!-- VERIFICATION -->
       <section class="page" id="page-verification">
-        <div class="page-heading"><div><h1>Verification Logs</h1><p>Review student identity verification records.</p></div></div>
-        <div class="notice">Selfie verification records and consent status will be available here. Access to verification images must be restricted and retention managed appropriately.</div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Verification ID</th><th>Exam ID</th><th>Hall Ticket</th><th>Consent</th><th>Verified At</th><th>Status</th></tr></thead><tbody><tr><td colspan="6" class="empty">Verification records will appear here after connection.</td></tr></tbody></table></div></div>
+        <div class="page-heading">
+          <div><h1>Verification Logs</h1><p>Review student identity verification records.</p></div>
+        </div>
+        <div class="notice">Verification records will be connected in a later backend update. Access to verification images must be restricted.</div>
       </section>
 
       <!-- SETTINGS -->
       <section class="page" id="page-settings">
-        <div class="page-heading"><div><h1>System Settings</h1><p>Manage examination and portal settings.</p></div></div>
+        <div class="page-heading">
+          <div><h1>System Settings</h1><p>Manage examination and portal settings.</p></div>
+        </div>
         <div class="panel">
           <h3>Student Examination Access</h3>
-          <div class="field"><label>Common Student Password</label><input type="password" placeholder="Managed securely by backend" disabled></div>
-          <p>The common password will be changed through a secure administrator action. It will not be stored in this webpage.</p>
+          <p>The common student password is managed securely through the Apps Script backend. It is not displayed on this webpage.</p>
         </div>
         <div class="panel">
           <h3>School Information</h3>
@@ -605,19 +616,24 @@ th{
         </div>
       </section>
 
-      <div class="footer">RAAGASREE E.M HIGH SCHOOL · V. KOTA<br>Excellence in Every Step</div>
+      <div class="footer">
+        RAAGASREE E.M HIGH SCHOOL · V. KOTA<br>
+        Excellence in Every Step
+      </div>
     </div>
   </main>
 </div>
 
 <script>
-/****************************************************
+/************************************************************
  * RAAGASREE ONLINE ASSESSMENT
- * ADMIN LOGIN CONNECTION
- ****************************************************/
+ * ADMIN DASHBOARD — LIVE DATABASE CONNECTION
+ ************************************************************/
 
 const ASSESSMENT_API_URL =
   "https://script.google.com/macros/s/AKfycbyzutEAMnW_97VZpPvGqKGiZa3psQHwUE_AB3Yxvby1f0l6APEE7gWnGMt20wGkHIGs/exec";
+
+const TOKEN_KEY = "RAAGASREE_ADMIN_TOKEN";
 
 const pageTitles = {
   dashboard:"Dashboard",
@@ -630,10 +646,33 @@ const pageTitles = {
   settings:"System Settings"
 };
 
+let allStudents = [];
 
-/****************************************************
+
+/************************************************************
+ * API REQUEST
+ ************************************************************/
+
+async function apiRequest(payload) {
+  const response = await fetch(ASSESSMENT_API_URL, {
+    method:"POST",
+    headers:{
+      "Content-Type":"text/plain;charset=utf-8"
+    },
+    body:JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    throw new Error("Server returned HTTP " + response.status);
+  }
+
+  return await response.json();
+}
+
+
+/************************************************************
  * ADMIN LOGIN
- ****************************************************/
+ ************************************************************/
 
 async function adminLogin() {
   const pin = document.getElementById("adminPin").value.trim();
@@ -653,45 +692,29 @@ async function adminLogin() {
   button.textContent = "Please wait...";
 
   try {
-    const response = await fetch(ASSESSMENT_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify({
-        action: "adminLogin",
-        pin: pin
-      })
+    const result = await apiRequest({
+      action:"adminLogin",
+      pin:pin
     });
 
-    if (!response.ok) {
-      throw new Error("Server returned HTTP " + response.status);
+    if (!result.success || !result.token) {
+      throw new Error(result.message || "Administrator login failed.");
     }
 
-    const result = await response.json();
+    sessionStorage.setItem(TOKEN_KEY,result.token);
 
-    if (result.success && result.token) {
-      sessionStorage.setItem("RAAGASREE_ADMIN_TOKEN", result.token);
+    document.getElementById("loginPin");
+    message.textContent = "";
 
-      message.textContent = "";
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("adminApp").style.display = "block";
 
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("adminApp").style.display = "block";
-      document.getElementById("connectionStatus").textContent = "Connected";
+    await loadAdminData();
 
-      showPage("dashboard");
-
-    } else {
-      message.style.color = "#d9534f";
-      message.textContent = result.message || "Administrator login failed.";
-    }
-
-  } catch (error) {
-    console.error("Admin login error:", error);
-
+  } catch(error) {
+    console.error("Admin login error:",error);
     message.style.color = "#d9534f";
-    message.textContent =
-      "Unable to connect to the backend. Please check the web app deployment and access permissions.";
+    message.textContent = error.message || "Unable to connect to the backend.";
   }
 
   button.disabled = false;
@@ -699,13 +722,224 @@ async function adminLogin() {
 }
 
 
-/****************************************************
+/************************************************************
+ * LOAD LIVE ADMIN DATA
+ ************************************************************/
+
+async function loadAdminData() {
+  const token = sessionStorage.getItem(TOKEN_KEY);
+
+  if (!token) {
+    showLoginScreen();
+    return;
+  }
+
+  const notice = document.getElementById("dashboardNotice");
+  const connection = document.getElementById("connectionStatus");
+
+  notice.className = "notice";
+  notice.textContent = "Loading live information from the assessment database...";
+  connection.textContent = "Connecting...";
+
+  try {
+    const result = await apiRequest({
+      action:"getAdminData",
+      token:token
+    });
+
+    if (!result.success) {
+      if (result.message && result.message.toLowerCase().includes("session")) {
+        logout();
+        return;
+      }
+      throw new Error(result.message || "Unable to load database information.");
+    }
+
+    updateDashboard(result);
+    allStudents = Array.isArray(result.students) ? result.students : [];
+
+    populateClassFilter();
+    renderStudents();
+
+    notice.className = "notice success";
+    notice.textContent = "Database connected successfully. Dashboard information is up to date.";
+
+    connection.textContent = "Connected";
+    document.getElementById("lastUpdated").textContent =
+      new Date().toLocaleString();
+
+    document.getElementById("studentNotice").className = "notice success";
+    document.getElementById("studentNotice").textContent =
+      "Successfully loaded " + allStudents.length + " student records from your Assessment Database.";
+
+  } catch(error) {
+    console.error("Database loading error:",error);
+
+    notice.className = "notice error";
+    notice.textContent = error.message || "Unable to load data from the database.";
+
+    connection.textContent = "Connection failed";
+    document.getElementById("studentNotice").className = "notice error";
+    document.getElementById("studentNotice").textContent =
+      "Unable to load student records. Please check your backend deployment.";
+  }
+}
+
+
+/************************************************************
+ * UPDATE DASHBOARD STATISTICS
+ ************************************************************/
+
+function updateDashboard(data) {
+  const stats = data.stats || {};
+
+  document.getElementById("totalStudents").textContent =
+    Number(stats.totalStudents || 0);
+
+  document.getElementById("activeStudents").textContent =
+    Number(stats.activeStudents || 0);
+
+  document.getElementById("totalSubjects").textContent =
+    Number(stats.totalSubjects || 0);
+
+  document.getElementById("totalQuestions").textContent =
+    Number(stats.totalQuestions || 0);
+
+  document.getElementById("totalExams").textContent =
+    Number(stats.totalExams || 0);
+}
+
+
+/************************************************************
+ * CLASS FILTER
+ ************************************************************/
+
+function populateClassFilter() {
+  const filter = document.getElementById("classFilter");
+  const previousValue = filter.value;
+
+  const classes = [...new Set(
+    allStudents
+      .map(student => String(student.className || "").trim())
+      .filter(Boolean)
+  )];
+
+  classes.sort((a,b) => {
+    const order = ["LKG","UKG","1","2","3","4","5","6","7","8","9","10"];
+    return order.indexOf(a) - order.indexOf(b);
+  });
+
+  filter.replaceChildren();
+
+  const allOption = document.createElement("option");
+  allOption.value = "";
+  allOption.textContent = "All Classes";
+  filter.appendChild(allOption);
+
+  classes.forEach(className => {
+    const option = document.createElement("option");
+    option.value = className;
+    option.textContent = className;
+    filter.appendChild(option);
+  });
+
+  if (classes.includes(previousValue)) {
+    filter.value = previousValue;
+  }
+}
+
+
+/************************************************************
+ * RENDER STUDENT TABLE
+ ************************************************************/
+
+function renderStudents() {
+  const tbody = document.getElementById("studentsTableBody");
+  const search = document.getElementById("studentSearch").value
+    .trim()
+    .toLowerCase();
+
+  const selectedClass = document.getElementById("classFilter").value;
+
+  const filtered = allStudents.filter(student => {
+    const hallTicket = String(student.hallTicketNumber || "").toLowerCase();
+    const name = String(student.studentName || "").toLowerCase();
+    const father = String(student.fatherName || "").toLowerCase();
+
+    const matchesSearch =
+      hallTicket.includes(search) ||
+      name.includes(search) ||
+      father.includes(search);
+
+    const matchesClass =
+      !selectedClass ||
+      String(student.className || "").trim() === selectedClass;
+
+    return matchesSearch && matchesClass;
+  });
+
+  tbody.replaceChildren();
+
+  if (filtered.length === 0) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 7;
+    cell.className = "empty";
+    cell.textContent = allStudents.length === 0
+      ? "No student records found in the database."
+      : "No matching students found.";
+    row.appendChild(cell);
+    tbody.appendChild(row);
+  } else {
+    filtered.forEach(student => {
+      const row = document.createElement("tr");
+
+      addCell(row,student.hallTicketNumber);
+      addCell(row,student.studentName);
+      addCell(row,student.fatherName);
+      addCell(row,student.className);
+      addCell(row,student.section);
+      addCell(row,student.academicYear);
+
+      const statusCell = document.createElement("td");
+      const badge = document.createElement("span");
+      const status = String(student.status || "Unknown").trim();
+
+      badge.className =
+        status.toLowerCase() === "active"
+          ? "status"
+          : "status inactive";
+
+      badge.textContent = status;
+      statusCell.appendChild(badge);
+      row.appendChild(statusCell);
+
+      tbody.appendChild(row);
+    });
+  }
+
+  document.getElementById("studentCount").textContent =
+    "Showing " + filtered.length + " of " + allStudents.length + " students";
+}
+
+function addCell(row,value) {
+  const cell = document.createElement("td");
+  cell.textContent = value == null ? "" : String(value);
+  row.appendChild(cell);
+}
+
+
+/************************************************************
  * LOGOUT
- ****************************************************/
+ ************************************************************/
 
 function logout() {
-  sessionStorage.removeItem("RAAGASREE_ADMIN_TOKEN");
+  sessionStorage.removeItem(TOKEN_KEY);
+  allStudents = [];
+  showLoginScreen();
+}
 
+function showLoginScreen() {
   document.getElementById("adminApp").style.display = "none";
   document.getElementById("loginScreen").style.display = "flex";
   document.getElementById("adminPin").value = "";
@@ -713,9 +947,9 @@ function logout() {
 }
 
 
-/****************************************************
+/************************************************************
  * PAGE NAVIGATION
- ****************************************************/
+ ************************************************************/
 
 function showPage(name) {
   document.querySelectorAll(".page").forEach(page => {
@@ -739,66 +973,55 @@ function showPage(name) {
     pageTitles[name] || "Dashboard";
 
   document.getElementById("sidebar").classList.remove("open");
+
+  if (name === "students") {
+    renderStudents();
+  }
 }
 
 
-/****************************************************
+/************************************************************
  * NAVIGATION BUTTONS
- ****************************************************/
+ ************************************************************/
 
 document.querySelectorAll(".nav-btn[data-page]").forEach(button => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click",() => {
     showPage(button.dataset.page);
   });
 });
 
 
-/****************************************************
+/************************************************************
  * MOBILE SIDEBAR
- ****************************************************/
+ ************************************************************/
 
 function toggleSidebar() {
   document.getElementById("sidebar").classList.toggle("open");
 }
 
 
-/****************************************************
- * FORM DISPLAY
- ****************************************************/
-
-function showForm(id) {
-  document.getElementById(id).style.display = "block";
-
-  document.getElementById(id).scrollIntoView({
-    behavior:"smooth",
-    block:"start"
-  });
-}
-
-function hideForm(id) {
-  document.getElementById(id).style.display = "none";
-}
-
-
-/****************************************************
- * DATABASE PLACEHOLDER
- ****************************************************/
-
-function notConnected() {
-  alert(
-    "This feature is not connected yet. " +
-    "The backend functions will be added next."
-  );
-}
-
-
-/****************************************************
+/************************************************************
  * ENTER KEY LOGIN
- ****************************************************/
+ ************************************************************/
 
-document.getElementById("adminPin").addEventListener("keydown", event => {
+document.getElementById("adminPin").addEventListener("keydown",event => {
   if (event.key === "Enter") {
     adminLogin();
+  }
+});
+
+
+/************************************************************
+ * RESTORE EXISTING SESSION
+ ************************************************************/
+
+document.addEventListener("DOMContentLoaded",() => {
+  const token = sessionStorage.getItem(TOKEN_KEY);
+
+  if (token) {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("adminApp").style.display = "block";
+    loadAdminData();
   }
 });
 </script>
