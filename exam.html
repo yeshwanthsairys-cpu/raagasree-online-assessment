@@ -1,1 +1,550 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raagasree | Student Examination</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+<style>
+.exam-shell{max-width:1200px;margin:35px auto;padding:0 20px}
+.panel{background:#fff;border:1px solid #e5eaf2;border-radius:16px;padding:25px;margin-bottom:20px}
+.student-bar,.exam-top,.question-top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.student-details{display:flex;gap:25px;flex-wrap:wrap;color:#526078;font-size:14px}
+.student-details strong{color:#152746}
+.exam-card{border:1px solid #e3e9f2;border-radius:12px;padding:20px;margin-top:15px}
+.exam-card h3{margin:0 0 8px;color:#17345e}
+.exam-meta{display:flex;gap:18px;flex-wrap:wrap;color:#65738a;font-size:14px;margin:12px 0}
+.primary-btn,.secondary-btn{border:0;border-radius:9px;padding:12px 20px;font-weight:700;cursor:pointer}
+.primary-btn{background:#174b91;color:#fff}
+.primary-btn:disabled{opacity:.5;cursor:not-allowed}
+.secondary-btn{background:#edf2f8;color:#17345e}
+.message{margin-top:15px;font-size:14px}
+.error{color:#b42318}
+.success{color:#16804a}
+.muted{color:#738096}
+.timer{font-size:22px;font-weight:800;color:#174b91;background:#edf4ff;padding:12px 18px;border-radius:10px}
+.timer.warning{color:#b42318;background:#fff0ed}
+.progress-track{height:7px;background:#e8edf5;border-radius:10px;margin-top:16px;overflow:hidden}
+.progress-fill{height:100%;background:#24845b;width:0;transition:width .2s}
+.exam-layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:20px}
+.question-number{font-size:13px;color:#64748b;font-weight:700}
+.question-text{font-size:19px;line-height:1.65;color:#172b4d;margin:18px 0}
+.question-image{display:block;max-width:100%;max-height:300px;object-fit:contain;margin:15px auto;border-radius:8px}
+.diagram{max-width:100%;overflow:auto;margin:15px 0}
+.diagram svg{max-width:100%;height:auto}
+.options{display:grid;gap:12px;margin-top:20px}
+.option{display:flex;align-items:center;gap:13px;border:1px solid #dce3ed;border-radius:11px;padding:14px;cursor:pointer;transition:.15s}
+.option:hover{border-color:#4778b8;background:#f7faff}
+.option.selected{border:2px solid #2163ac;background:#edf5ff}
+.option-letter{width:32px;height:32px;border-radius:50%;background:#edf1f6;display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.option.selected .option-letter{background:#2163ac;color:white}
+.option img{max-width:140px;max-height:100px;object-fit:contain}
+.question-nav{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:15px}
+.q-number{border:1px solid #dce3ed;background:white;border-radius:8px;min-height:38px;font-weight:700;cursor:pointer}
+.q-number.answered{background:#e1f5e9;border-color:#70bd8e;color:#17663a}
+.q-number.current{outline:2px solid #245da2;outline-offset:1px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:#64748b;margin-top:15px}
+.legend span{display:flex;align-items:center;gap:5px}
+.dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+.dot-green{background:#70bd8e}.dot-grey{background:#d5dce6}.dot-blue{background:#245da2}
+.question-actions{display:flex;justify-content:space-between;gap:10px;margin-top:25px;flex-wrap:wrap}
+.subject-heading{font-weight:800;color:#174b91;margin:25px 0 10px}
+.hidden{display:none!important}
+.notice-box{background:#fff8e7;border:1px solid #f0d99b;padding:14px;border-radius:10px;color:#755719;font-size:13px;margin-top:15px}
+@media(max-width:760px){
+ .exam-shell{padding:0 12px;margin:18px auto}
+ .panel{padding:17px}
+ .exam-layout{grid-template-columns:1fr}
+ .question-text{font-size:17px}
+ .timer{font-size:19px}
+ .question-nav{grid-template-columns:repeat(6,1fr)}
+}
+</style>
+</head>
+
+<body>
+<div class="top-strip"></div>
+
+<header>
+ <div class="header-inner">
+  <div class="logo">R</div>
+  <div>
+   <div class="school-name">RAAGASREE E.M HIGH SCHOOL</div>
+   <div class="school-location">V. KOTA · ANDHRA PRADESH</div>
+  </div>
+  <div class="header-tagline">EXCELLENCE IN EVERY STEP</div>
+ </div>
+</header>
+
+<main class="exam-shell">
+
+ <section id="dashboardScreen">
+  <div class="panel">
+   <div class="student-bar">
+    <div>
+     <div class="muted">WELCOME, STUDENT</div>
+     <h2 id="studentName">Loading...</h2>
+    </div>
+    <button class="secondary-btn" onclick="logoutStudent()">Logout</button>
+   </div>
+   <div class="student-details">
+    <div>Hall Ticket: <strong id="studentHallTicket">-</strong></div>
+    <div>Class: <strong id="studentClass">-</strong></div>
+    <div>Section: <strong id="studentSection">-</strong></div>
+    <div>Academic Year: <strong id="studentYear">-</strong></div>
+   </div>
+  </div>
+
+  <div class="panel">
+   <h2>Available Assessments</h2>
+   <p class="muted">Select an active assessment to continue.</p>
+   <div id="examList">Loading available assessments...</div>
+   <div id="dashboardMessage" class="message"></div>
+  </div>
+ </section>
+
+ <section id="examScreen" class="hidden">
+  <div class="panel">
+   <div class="exam-top">
+    <div>
+     <div class="muted" id="examStudentName"></div>
+     <h2 id="examTitle">Assessment</h2>
+     <div class="muted" id="examInfo"></div>
+    </div>
+    <div>
+     <div class="muted">TIME REMAINING</div>
+     <div class="timer" id="timer">--:--</div>
+    </div>
+   </div>
+   <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+   <div class="muted" id="progressText" style="margin-top:8px;font-size:13px"></div>
+  </div>
+
+  <div class="exam-layout">
+   <section class="panel">
+    <div class="question-top">
+     <div class="question-number" id="questionCounter"></div>
+     <div class="question-number" id="questionMarks"></div>
+    </div>
+    <div id="subjectName" class="subject-heading"></div>
+    <div id="questionText" class="question-text"></div>
+    <img id="questionImage" class="question-image hidden" alt="Question illustration">
+    <div id="questionDiagram" class="diagram"></div>
+    <div id="options" class="options"></div>
+
+    <div class="question-actions">
+     <button class="secondary-btn" id="previousBtn" onclick="previousQuestion()">← Previous</button>
+     <button class="primary-btn" id="nextBtn" onclick="nextQuestion()">Next →</button>
+    </div>
+   </section>
+
+   <aside class="panel">
+    <h3>Question Palette</h3>
+    <div class="muted" style="font-size:13px">Select any question to navigate.</div>
+    <div id="questionPalette" class="question-nav"></div>
+    <div class="legend">
+     <span><i class="dot dot-green"></i> Answered</span>
+     <span><i class="dot dot-grey"></i> Not answered</span>
+     <span><i class="dot dot-blue"></i> Current</span>
+    </div>
+    <div class="notice-box">
+     You can change your answers any time before final submission.
+    </div>
+    <div style="margin-top:22px">
+     <button class="primary-btn" style="width:100%" onclick="confirmSubmission()">Submit Examination</button>
+    </div>
+   </aside>
+  </div>
+ </section>
+
+ <section id="resultScreen" class="hidden">
+  <div class="panel" style="text-align:center;padding:45px 20px">
+   <h2>Assessment Submitted</h2>
+   <p id="resultMessage">Your answers have been submitted successfully.</p>
+   <button class="primary-btn" onclick="logoutStudent()">Logout</button>
+  </div>
+ </section>
+
+</main>
+
+<footer>
+ <strong>RAAGASREE E.M HIGH SCHOOL</strong><br>
+ Excellence in Every Step · V. Kota<br>
+ © 2026–27 Raagasree. All Rights Reserved.
+</footer>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyzutEAMnW_97VZpPvGqKGiZa3psQHwUE_AB3Yxvby1f0l6APEE7gWnGMt20wGkHIGs/exec";
+const TOKEN_KEY = "RAAGASREE_STUDENT_TOKEN";
+const DATA_KEY = "RAAGASREE_STUDENT_DATA";
+
+let student = null;
+let exams = [];
+let currentExam = null;
+let questions = [];
+let answers = {};
+let currentIndex = 0;
+let attemptId = "";
+let timerInterval = null;
+let deadline = 0;
+let submitting = false;
+
+async function api(payload) {
+ const token = sessionStorage.getItem(TOKEN_KEY);
+ if (payload.action !== "studentLogin" && token) payload.token = token;
+
+ const response = await fetch(API_URL, {
+  method:"POST",
+  headers:{"Content-Type":"text/plain;charset=utf-8"},
+  body:JSON.stringify(payload)
+ });
+
+ if (!response.ok) throw new Error("Server returned HTTP " + response.status);
+
+ const data = await response.json();
+ if (!data.success) throw new Error(data.message || "Request failed.");
+ return data;
+}
+
+function showMessage(id,message,type="") {
+ const el = document.getElementById(id);
+ el.textContent = message;
+ el.className = "message " + type;
+}
+
+function showScreen(id) {
+ ["dashboardScreen","examScreen","resultScreen"].forEach(function(screen) {
+  document.getElementById(screen).classList.add("hidden");
+ });
+ document.getElementById(id).classList.remove("hidden");
+}
+
+function escapeHtml(value) {
+ return String(value == null ? "" : value).replace(/[&<>"']/g,function(c) {
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+ });
+}
+
+async function loadDashboard() {
+ const savedToken = sessionStorage.getItem(TOKEN_KEY);
+ const savedStudent = sessionStorage.getItem(DATA_KEY);
+
+ if (!savedToken || !savedStudent) {
+  window.location.href = "index.html";
+  return;
+ }
+
+ try {
+  student = JSON.parse(savedStudent);
+
+  document.getElementById("studentName").textContent = student.studentName || "Student";
+  document.getElementById("studentHallTicket").textContent = student.hallTicketNumber || "-";
+  document.getElementById("studentClass").textContent = student.className || "-";
+  document.getElementById("studentSection").textContent = student.section || "-";
+  document.getElementById("studentYear").textContent = student.academicYear || "-";
+
+  const data = await api({action:"getStudentExams"});
+  exams = data.exams || [];
+  renderExams();
+
+ } catch(error) {
+  showMessage("dashboardMessage",error.message,"error");
+  if (error.message.toLowerCase().includes("session")) {
+   logoutStudent();
+  }
+ }
+}
+
+function renderExams() {
+ const container = document.getElementById("examList");
+
+ if (!exams.length) {
+  container.innerHTML = '<p class="muted">No active assessments are currently available for your class.</p>';
+  return;
+ }
+
+ container.innerHTML = exams.map(function(exam,index) {
+  const status = String(exam.attemptStatus || "Not Started");
+  const completed = status.toLowerCase() !== "not started" &&
+                    status.toLowerCase() !== "in progress";
+  const label = completed ? "Already Submitted" :
+                status.toLowerCase() === "in progress" ? "Resume Assessment" :
+                "Start Assessment";
+
+  return `
+   <div class="exam-card">
+    <h3>${escapeHtml(exam.examName)}</h3>
+    <div class="exam-meta">
+     <span>Class: ${escapeHtml(exam.className)}</span>
+     <span>Duration: ${escapeHtml(exam.duration)} minutes</span>
+     <span>Total Marks: ${escapeHtml(exam.totalMarks)}</span>
+     <span>Questions per Subject: ${escapeHtml(exam.totalQuestions)}</span>
+    </div>
+    <div class="exam-meta">
+     <span>Status: <strong>${escapeHtml(status)}</strong></span>
+    </div>
+    <button class="primary-btn" ${completed ? "disabled" : ""} onclick="startExam(${index})">${label}</button>
+   </div>`;
+ }).join("");
+}
+
+async function startExam(index) {
+ const exam = exams[index];
+ if (!exam || submitting) return;
+
+ const buttons = document.querySelectorAll("#examList button");
+ buttons.forEach(function(button) {button.disabled=true;});
+
+ showMessage("dashboardMessage","Loading examination. Please wait...");
+
+ try {
+  const data = await api({
+   action:"startExam",
+   examId:exam.examId
+  });
+
+  currentExam = data;
+  attemptId = data.attemptId;
+  questions = data.questions || [];
+  answers = {};
+  currentIndex = 0;
+  submitting = false;
+
+  if (!questions.length) {
+   throw new Error("No questions have been assigned to this examination.");
+  }
+
+  document.getElementById("examStudentName").textContent =
+   student.studentName + " · " + student.className;
+
+  document.getElementById("examTitle").textContent = data.examName || exam.examName;
+  document.getElementById("examInfo").textContent =
+   questions.length + " Questions · " + data.totalMarks + " Marks";
+
+  deadline = new Date(data.expectedEndTime).getTime();
+
+  if (!Number.isFinite(deadline)) {
+   throw new Error("The examination timer could not be started.");
+  }
+
+  showScreen("examScreen");
+  renderQuestion();
+  startTimer(data.serverTime);
+
+ } catch(error) {
+  showMessage("dashboardMessage",error.message,"error");
+  buttons.forEach(function(button) {
+   if (!button.disabled || !button.textContent.includes("Already")) button.disabled=false;
+  });
+ }
+}
+
+function renderQuestion() {
+ const q = questions[currentIndex];
+ if (!q) return;
+
+ document.getElementById("questionCounter").textContent =
+  "QUESTION " + (currentIndex + 1) + " OF " + questions.length;
+
+ document.getElementById("questionMarks").textContent =
+  (Number(q.marks) || 0) + " Marks";
+
+ document.getElementById("subjectName").textContent =
+  q.subjectName || "Assessment";
+
+ document.getElementById("questionText").textContent =
+  q.question || "";
+
+ const image = document.getElementById("questionImage");
+ if (q.questionImageUrl) {
+  image.src = q.questionImageUrl;
+  image.classList.remove("hidden");
+  image.onerror = function() {image.classList.add("hidden");};
+ } else {
+  image.removeAttribute("src");
+  image.classList.add("hidden");
+ }
+
+ document.getElementById("questionDiagram").innerHTML =
+  q.diagramSvg || "";
+
+ const options = [
+  {key:"A",text:q.optionA,image:q.optionAImageUrl},
+  {key:"B",text:q.optionB,image:q.optionBImageUrl},
+  {key:"C",text:q.optionC,image:q.optionCImageUrl},
+  {key:"D",text:q.optionD,image:q.optionDImageUrl}
+ ];
+
+ document.getElementById("options").innerHTML = options.map(function(option) {
+  const selected = answers[q.questionId] === option.key;
+  return `
+   <div class="option ${selected ? "selected" : ""}"
+        role="button" tabindex="0"
+        aria-pressed="${selected}"
+        onclick="selectAnswer('${escapeHtml(q.questionId)}','${option.key}')"
+        onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectAnswer('${escapeHtml(q.questionId)}','${option.key}')}">
+    <div class="option-letter">${option.key}</div>
+    <div style="flex:1">
+     ${option.text ? '<div>'+escapeHtml(option.text)+'</div>' : ""}
+     ${option.image ? '<img src="'+escapeHtml(option.image)+'" alt="Option '+option.key+' illustration">' : ""}
+    </div>
+   </div>`;
+ }).join("");
+
+ document.getElementById("previousBtn").disabled = currentIndex === 0;
+ document.getElementById("nextBtn").textContent =
+  currentIndex === questions.length - 1 ? "Last Question" : "Next →";
+
+ renderPalette();
+ updateProgress();
+}
+
+function selectAnswer(questionId,option) {
+ if (submitting) return;
+ answers[questionId] = option;
+ renderQuestion();
+}
+
+function renderPalette() {
+ document.getElementById("questionPalette").innerHTML =
+  questions.map(function(q,index) {
+   const answered = Boolean(answers[q.questionId]);
+   return `<button class="q-number ${answered ? "answered" : ""} ${index === currentIndex ? "current" : ""}"
+    onclick="goToQuestion(${index})">${index+1}</button>`;
+  }).join("");
+}
+
+function goToQuestion(index) {
+ if (index < 0 || index >= questions.length) return;
+ currentIndex = index;
+ renderQuestion();
+}
+
+function previousQuestion() {
+ goToQuestion(currentIndex - 1);
+}
+
+function nextQuestion() {
+ if (currentIndex < questions.length - 1) {
+  goToQuestion(currentIndex + 1);
+ }
+}
+
+function updateProgress() {
+ const answered = Object.keys(answers).length;
+ const percentage = questions.length ? (answered / questions.length) * 100 : 0;
+ document.getElementById("progressFill").style.width = percentage + "%";
+ document.getElementById("progressText").textContent =
+  answered + " of " + questions.length + " questions answered";
+}
+
+function startTimer(serverTime) {
+ clearInterval(timerInterval);
+
+ const serverTimestamp = new Date(serverTime).getTime();
+ const localAtStart = Date.now();
+ const offset = serverTimestamp - localAtStart;
+
+ function tick() {
+  const remaining = Math.max(0,deadline - (Date.now() + offset));
+  const seconds = Math.floor(remaining / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainder = seconds % 60;
+
+  const timer = document.getElementById("timer");
+  timer.textContent =
+   String(minutes).padStart(2,"0") + ":" +
+   String(remainder).padStart(2,"0");
+
+  timer.classList.toggle("warning",remaining <= 300000);
+
+  if (remaining <= 0) {
+   clearInterval(timerInterval);
+   submitExam(true);
+  }
+ }
+
+ tick();
+ timerInterval = setInterval(tick,1000);
+}
+
+function confirmSubmission() {
+ if (submitting) return;
+
+ const unanswered = questions.length - Object.keys(answers).length;
+
+ const message = unanswered > 0
+  ? "You have " + unanswered + " unanswered question(s). Are you sure you want to submit?"
+  : "Are you sure you want to submit your examination?";
+
+ if (window.confirm(message)) {
+  submitExam(false);
+ }
+}
+
+async function submitExam(automatic) {
+ if (submitting) return;
+
+ submitting = true;
+ clearInterval(timerInterval);
+
+ const buttons = document.querySelectorAll("#examScreen button");
+ buttons.forEach(function(button) {button.disabled=true;});
+
+ document.getElementById("timer").textContent =
+  automatic ? "TIME UP" : "SUBMITTING...";
+
+ try {
+  const data = await api({
+   action:"submitExam",
+   examId:currentExam.examId,
+   answers:answers
+  });
+
+  showScreen("resultScreen");
+  document.getElementById("resultMessage").textContent =
+   automatic
+    ? "Your examination time ended. Your answers have been submitted."
+    : "Your answers have been submitted successfully.";
+
+ } catch(error) {
+  submitting = false;
+
+  if (deadline <= Date.now()) {
+   showScreen("resultScreen");
+   document.getElementById("resultMessage").textContent =
+    "Your examination time has ended. Please contact the school to verify your submission.";
+  } else {
+   buttons.forEach(function(button) {button.disabled=false;});
+   showScreen("examScreen");
+   alert("Submission failed: " + error.message +
+    "\nPlease check your connection and try again.");
+  }
+ }
+}
+
+async function logoutStudent() {
+ if (timerInterval) clearInterval(timerInterval);
+
+ try {
+  if (sessionStorage.getItem(TOKEN_KEY)) {
+   await api({action:"studentLogout"});
+  }
+ } catch(error) {
+  // Continue with local logout.
+ }
+
+ sessionStorage.removeItem(TOKEN_KEY);
+ sessionStorage.removeItem(DATA_KEY);
+ window.location.href = "index.html";
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
+
