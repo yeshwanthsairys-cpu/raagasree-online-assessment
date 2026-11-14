@@ -16,14 +16,28 @@ async function studentApi(payload) {
     body: JSON.stringify(payload)
   });
 
+  const responseText = await response.text();
+
   if (!response.ok) {
-    throw new Error("Server returned HTTP " + response.status);
+    throw new Error(
+      "Server HTTP " + response.status + ": " + responseText
+    );
   }
 
-  const data = await response.json();
+  let data;
+
+  try {
+    data = JSON.parse(responseText);
+  } catch (error) {
+    throw new Error(
+      "Server returned an invalid response. Check Apps Script deployment."
+    );
+  }
 
   if (!data.success) {
-    throw new Error(data.message || "Login failed.");
+    throw new Error(
+      data.message || data.error || "Login verification failed."
+    );
   }
 
   return data;
@@ -48,11 +62,13 @@ loginForm.addEventListener("submit", async function(event) {
   if (!hallTicketNumber || !password) {
     loginMessage.textContent =
       "Please enter your Hall Ticket Number and password.";
+    loginMessage.className = "message error";
     return;
   }
 
   loginButton.disabled = true;
   loginButton.textContent = "VERIFYING...";
+
   loginMessage.textContent = "Verifying your details...";
   loginMessage.className = "message";
 
@@ -69,17 +85,39 @@ loginForm.addEventListener("submit", async function(event) {
       password: password
     });
 
-    if (!data.token || !data.student) {
-      throw new Error("Invalid login response from the server.");
+    console.log("Student login response:", data);
+
+    if (!data.token) {
+      throw new Error(
+        "Login response does not contain a student token."
+      );
     }
 
-    // Save in localStorage because exam.html reads localStorage.
-    localStorage.setItem(STUDENT_TOKEN_KEY, data.token);
+    if (!data.student) {
+      throw new Error(
+        "Login response does not contain student details."
+      );
+    }
+
+    localStorage.setItem(
+      STUDENT_TOKEN_KEY,
+      data.token
+    );
 
     localStorage.setItem(
       STUDENT_DATA_KEY,
       JSON.stringify(data.student)
     );
+
+    // Verify that the login information was saved.
+    const savedToken = localStorage.getItem(STUDENT_TOKEN_KEY);
+    const savedStudent = localStorage.getItem(STUDENT_DATA_KEY);
+
+    if (!savedToken || !savedStudent) {
+      throw new Error(
+        "Unable to save login details in this browser."
+      );
+    }
 
     loginMessage.textContent =
       "Login successful! Opening your examination dashboard...";
@@ -88,11 +126,14 @@ loginForm.addEventListener("submit", async function(event) {
 
     loginButton.textContent = "LOGIN SUCCESSFUL";
 
-    window.location.assign("exam.html");
+    window.location.href = "./exam.html";
 
   } catch (error) {
+    console.error("STUDENT LOGIN ERROR:", error);
+
     loginMessage.textContent =
-      error.message || "Unable to connect. Please try again.";
+      "LOGIN ERROR: " +
+      (error.message || String(error));
 
     loginMessage.className = "message error";
 
