@@ -29,7 +29,7 @@ async function studentApi(payload) {
   return data;
 }
 
-loginForm.addEventListener("submit", async function (event) {
+loginForm.addEventListener("submit", async function(event) {
   event.preventDefault();
 
   const hallTicketNumber = document
@@ -56,6 +56,9 @@ loginForm.addEventListener("submit", async function (event) {
   loginMessage.textContent = "Verifying your details...";
   loginMessage.className = "message";
 
+  localStorage.removeItem(STUDENT_TOKEN_KEY);
+  localStorage.removeItem(STUDENT_DATA_KEY);
+
   sessionStorage.removeItem(STUDENT_TOKEN_KEY);
   sessionStorage.removeItem(STUDENT_DATA_KEY);
 
@@ -70,21 +73,22 @@ loginForm.addEventListener("submit", async function (event) {
       throw new Error("Invalid login response from the server.");
     }
 
-    sessionStorage.setItem(STUDENT_TOKEN_KEY, data.token);
+    // Save in localStorage because exam.html reads localStorage.
+    localStorage.setItem(STUDENT_TOKEN_KEY, data.token);
 
-    sessionStorage.setItem(
+    localStorage.setItem(
       STUDENT_DATA_KEY,
       JSON.stringify(data.student)
     );
 
     loginMessage.textContent =
-      "Login successful! Redirecting to your dashboard...";
+      "Login successful! Opening your examination dashboard...";
 
     loginMessage.className = "message success";
 
     loginButton.textContent = "LOGIN SUCCESSFUL";
 
-    window.location.href = "exam.html";
+    window.location.assign("exam.html");
 
   } catch (error) {
     loginMessage.textContent =
