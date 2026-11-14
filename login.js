@@ -54,6 +54,7 @@ loginForm.addEventListener("submit", async function (event) {
   loginButton.disabled = true;
   loginButton.textContent = "VERIFYING...";
   loginMessage.textContent = "Verifying your details...";
+  loginMessage.className = "message";
 
   sessionStorage.removeItem(STUDENT_TOKEN_KEY);
   sessionStorage.removeItem(STUDENT_DATA_KEY);
@@ -65,20 +66,25 @@ loginForm.addEventListener("submit", async function (event) {
       password: password
     });
 
+    if (!data.token || !data.student) {
+      throw new Error("Invalid login response from the server.");
+    }
+
     sessionStorage.setItem(STUDENT_TOKEN_KEY, data.token);
+
     sessionStorage.setItem(
       STUDENT_DATA_KEY,
       JSON.stringify(data.student)
     );
 
     loginMessage.textContent =
-      "Login successful! Welcome, " +
-      (data.student.studentName || "Student") +
-      ".";
+      "Login successful! Redirecting to your dashboard...";
 
     loginMessage.className = "message success";
 
     loginButton.textContent = "LOGIN SUCCESSFUL";
+
+    window.location.href = "exam.html";
 
   } catch (error) {
     loginMessage.textContent =
@@ -90,4 +96,3 @@ loginForm.addEventListener("submit", async function (event) {
     loginButton.textContent = "CONTINUE TO LOGIN →";
   }
 });
-
